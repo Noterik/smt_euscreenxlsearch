@@ -1,0 +1,13 @@
+loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
+loadStyleSheet(screen,generic) // load the generic stylesheet
+setRole(screen,"itempage")
+loadContent(screen,template)
+loadContent(screen,header)
+loadContent(screen,footer)
+loadContent(screen,activefilters)
+loadContent(screen,searcher)
+loadContent(screen,filters)
+loadContent(screen,results)
+callServer(populateFiltersClient,screen,content)
+callServer(createFilter,screen,content)
+callServer(createCounterFilter,screen,content)

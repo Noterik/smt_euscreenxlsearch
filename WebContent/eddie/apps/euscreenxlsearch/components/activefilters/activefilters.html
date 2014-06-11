@@ -1,0 +1,21 @@
+<script type="text/template" id="active-filter-template">
+	<% for(var i = 0; i < activeFilters.length; i++){ %>
+	<% var activeFilter = activeFilters[i] %>
+	<div class="filter badge" data-type="<%= activeFilter.type %>" data-value="<%= activeFilter.value %>">
+	  <button class="btn btn-default btn-xs">
+	    <span class="glyphicon glyphicon-remove">
+	    </span>
+	  </button>
+	  <span class="filter-label">
+	  	<%= activeFilter.type %>: <%= activeFilter.value %>
+	  </span>
+	</div>
+	<% } %>
+</script>
+<div class="col-md-12 active-filters">
+</div>
+<div class="col-md-12">
+	<button class="btn btn-default">
+  		<span>Clear all</span>
+	</button>
+</div>

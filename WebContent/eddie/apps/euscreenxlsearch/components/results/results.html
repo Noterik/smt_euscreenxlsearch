@@ -1,0 +1,62 @@
+<script class="result-template" type="text/template">
+	<div class="row media-item">
+	  <div class="media-image col-xs-4">
+	    <div class="media-wrapper">
+	      <img class="media-object" width="100%" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://images1.noterik.com/domain/euscreen/thumbs/7/7/EUS_7724608B7F54413B9C3EAFAEFC0B072E.jpg')} %>">
+	      <div class="media-type">
+	        <span>
+	        	<% if(item.type == "video"){ print(item.duration) } %>
+	        </span>
+	      </div>
+	    </div>
+	  </div>
+	  <div class="media-metadata col-xs-8">
+	    <h3 class="media-heading">
+	      <%= item.title %>
+	    </h3>
+	    <span class="label">
+	      Original Title:
+	    </span>
+	    <span class="value">
+	     <%= item.originalTitle %>
+	    </span>
+	    <br/>
+	    <span class="label">
+	      Provider:
+	    </span>
+	    <span class="value">
+	      <%= item.provider %>
+	    </span>
+	    <br/>
+	    <span class="label">
+	      Production year:
+	    </span>
+	    <span class="value">
+	      <%= item.year %>
+	    </span>
+	    <br/>
+	    <span class="label">
+	      Language:
+	    </span>
+	    <span class="value">
+	   		<%= item.language %>
+	    </span>
+	  </div>
+	</div>
+</script>
+<script class="loading-template" type="text/template">
+	<div class="loading">
+		Please wait, loading results...
+	</div>
+</script>
+<div class="col-md-12">
+	<div class="row">
+		<div class="col-md-12 result-list">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-12">
+			<button class="btn btn-default load-more">Load more</button>
+		</div>
+	</div>
+</div>
