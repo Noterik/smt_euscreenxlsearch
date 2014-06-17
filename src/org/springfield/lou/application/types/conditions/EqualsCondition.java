@@ -7,6 +7,7 @@ public class EqualsCondition extends FilterCondition {
 	private String field;
 	private String allowedValue;
 	private String fieldSeperator = ",";
+	private boolean trim = true;
 	private boolean caseSensitive = false;
 	
 	public EqualsCondition(String field, String allowedValue) {
@@ -40,6 +41,10 @@ public class EqualsCondition extends FilterCondition {
 				allowedValue = allowedValue.toLowerCase();
 			}
 			
+			if(trim){
+				value = value.trim();
+			}
+			
 			String[] values;
 			if(fieldSeperator != null){
 				values = value.split(fieldSeperator);
@@ -51,7 +56,7 @@ public class EqualsCondition extends FilterCondition {
 				String singleValue = values[i];
 								
 				if(allowedValue.equals(singleValue)){
-					this.getCounter().tick();
+					this.getPassed().add(node);
 					return true;
 				}
 				

@@ -28,7 +28,6 @@ public class OrCondition extends FilterCondition {
 		for(Iterator<FilterCondition> iter = this.conditions.iterator(); iter.hasNext();){
 			IFilterCondition condition = iter.next();
 			if(condition.allow(node)){
-				this.getCounter().tick();
 				return true;
 			}
 		}

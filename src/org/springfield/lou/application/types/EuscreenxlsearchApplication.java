@@ -50,8 +50,16 @@ import org.springfield.lou.screen.Screen;
 
 public class EuscreenxlsearchApplication extends Html5Application{
 	
+	/*
+	 * Cached copy of all the nodes. Not sure if this is really neccesary. 
+	 */
 	private FSList allNodes;
-	private ArrayList<String> availableFilterCategories;
+	
+	/*
+	 * Arraylist containing all the categories of fields. This will be used to categorize the conditions, and to fill 
+	 * the select boxes
+	 */
+	private ArrayList<String> availableConditionFieldCategories;
 	
 	/*
 	 * Constructor for the preview application for EUScreen providers
@@ -64,39 +72,53 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
 		allNodes = FSListManager.get(uri);
 		
-		this.availableFilterCategories = new ArrayList<String>();
-		this.availableFilterCategories.add("language");
-		this.availableFilterCategories.add("decade");
-		this.availableFilterCategories.add("topic");
-		this.availableFilterCategories.add("provider");
-		this.availableFilterCategories.add("publisher");
-		this.availableFilterCategories.add("genre");
-		this.availableFilterCategories.add("country");
+		this.availableConditionFieldCategories = new ArrayList<String>();
+		this.availableConditionFieldCategories.add("language");
+		this.availableConditionFieldCategories.add("decade");
+		this.availableConditionFieldCategories.add("topic");
+		this.availableConditionFieldCategories.add("provider");
+		this.availableConditionFieldCategories.add("publisher");
+		this.availableConditionFieldCategories.add("genre");
+		this.availableConditionFieldCategories.add("country");
+		
 				
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
+		
+		//refer the header and footer elements from euscreenxl element application. 
 		this.addReferid("header", "/euscreenxlelements/header");
 		this.addReferid("footer", "/euscreenxlelements/footer");
 	}
 	
+	/**
+	 * Sets the search query on the screen, this will be used to search through the nodes. 
+	 * 
+	 * @param s The screen for which to set the search query.
+	 * @param data The JSONObject containing the search query. 
+	 */
 	public void setSearchQuery(Screen s, String data){
 		System.out.println("setSearchQuery(" + data + ")");
 		JSONObject queryData = (JSONObject) JSONValue.parse(data);
 		
 		String query = (String) queryData.get("query");
 		query = query.toLowerCase();
+		
+		//If the query is empty, set the query to * to return all
 		if(query.equals("")){
 			s.setProperty("searchQuery", "*");
 		}else{
 			s.setProperty("searchQuery", query);
 		}
 		
-		s.setProperty("sortDirection", "up");
-		s.setProperty("sortField", "id");
 		s.setProperty("maxDisplay", 20);
 		search(s);
 	}
 	
+	/**
+	 * Executes the search for the given screen. 
+	 * 
+	 * @param s The screen for which to execute the search
+	 */
 	public void search(Screen s){
 		System.out.println("search()");
 		
@@ -104,16 +126,18 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		// filtered and sorted
 		List<FsNode> nodes = null;
 		
+		//reset the counters before doing the search.
 		this.resetCounters(s);
 		
+		//Get the search parameter from the Screen object
 		String query = (String) s.getProperty("searchQuery");
 		if(query == null){
 			query = "*";
 		}
-		
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
 		Integer maxDisplay = (Integer) s.getProperty("maxDisplay");
+		
 		
 		try{
 			if (query.equals("*")) { 
@@ -133,32 +157,81 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			e.printStackTrace();
 		}
 		
+		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
-				
+						
 		s.setProperty("results", nodes);
 		
-		JSONArray results = new JSONArray();
+		JSONObject results = createResultSet(nodes);
 		
-		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
-			// get the next node
-			FsNode n = (FsNode)iter.next();	
+		s.putMsg("resultcounter", "", "setAmount(" + nodes.size() + ")");
+		s.putMsg("resulttopbar", "", "show()");
+		s.putMsg("results", "", "setResults(" + results + ")");
+		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s, nodes) + ")");
+	}
+	
+	private JSONObject createResultSet(List<FsNode> nodes){
+		JSONObject resultSet = new JSONObject();
+		JSONArray all = new JSONArray();
+		resultSet.put("all", all);
+		
+		Filter typeFilter = getTypeFilter();
+		
+		typeFilter.run(nodes);
+		
+		ArrayList<FilterCondition> types = typeFilter.getConditions();
+		
+		for(Iterator<FilterCondition> typeIterator = types.iterator(); typeIterator.hasNext();){
+			TypeCondition typeCondition = (TypeCondition) typeIterator.next();
+			String type = typeCondition.getAllowedValue();
 			
-			JSONObject object = new JSONObject();
-			object.put("type", n.getName());
-			object.put("screenshot", n.getProperty(FieldMappings.getSystemFieldName("screenshot")));
-			object.put("title", n.getProperty(FieldMappings.getSystemFieldName("title")));
-			object.put("originalTitle", n.getProperty(FieldMappings.getSystemFieldName("originalTitle")));
-			object.put("provider", n.getProperty(FieldMappings.getSystemFieldName("provider")));
-			object.put("year", n.getProperty(FieldMappings.getSystemFieldName("year")));
-			object.put("language", n.getProperty(FieldMappings.getSystemFieldName("language")));
-			object.put("duration", n.getProperty(FieldMappings.getSystemFieldName("duration")));
+			JSONArray resultsForType = new JSONArray();
 			
-			results.add(object);
-		}
-		this.componentmanager.getComponent("results").put("", "setResults(" + results + ")");
-		this.componentmanager.getComponent("searcher").put("", "setCounter(" + nodes.size() + ")");	
-		this.componentmanager.getComponent("filters").put("", "setCounts(" + this.getCounterClient(s, nodes) + ")");
+			for(Iterator<FsNode> nodeIterator = typeCondition.getPassed().iterator(); nodeIterator.hasNext();){
+				FsNode node = nodeIterator.next();
+				
+				JSONObject result = new JSONObject();
+				result.put("type", node.getName());
+				result.put("screenshot", node.getProperty(FieldMappings.getSystemFieldName("screenshot")));
+				result.put("title", node.getProperty(FieldMappings.getSystemFieldName("title")));
+				result.put("originalTitle", node.getProperty(FieldMappings.getSystemFieldName("originalTitle")));
+				result.put("provider", node.getProperty(FieldMappings.getSystemFieldName("provider")));
+				result.put("year", node.getProperty(FieldMappings.getSystemFieldName("year")));
+				result.put("language", node.getProperty(FieldMappings.getSystemFieldName("language")));
+				result.put("duration", node.getProperty(FieldMappings.getSystemFieldName("duration")));
+				resultsForType.add(result);
+				all.add(result);
+			}
+			
+			resultSet.put(type, resultsForType);
+		} 
+				
+		return resultSet;
+	};
+	
+	private Filter getTypeFilter(){
+		ArrayList<FilterCondition> types = new ArrayList<FilterCondition>();
+		
+		types.add(new TypeCondition("video"));
+		types.add(new TypeCondition("picture"));
+		types.add(new TypeCondition("doc"));
+		types.add(new TypeCondition("audio"));
+		
+		Filter filter = new Filter(types);
+		return filter;
+	};
+	
+	public void setDefaultSorting(Screen s){
+		s.setProperty("sortDirection", "up");
+		s.setProperty("sortField", FieldMappings.getSystemFieldName("title"));
+	}
+	
+	public void setSorting(Screen s, String data){
+		JSONObject message = (JSONObject) JSONValue.parse(data);
+		s.setProperty("sortDirection", message.get("direction"));
+		s.setProperty("sortField", FieldMappings.getSystemFieldName((String) message.get("field")));
+		search(s);
 	}
 	
 	public void createCounterFilter(Screen s){
@@ -171,7 +244,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			// get the next node
 			FsNode n = (FsNode)iter.next();	
 			
-			for(Iterator<String> categoriesIterator = this.availableFilterCategories.iterator(); categoriesIterator.hasNext();){
+			for(Iterator<String> categoriesIterator = this.availableConditionFieldCategories.iterator(); categoriesIterator.hasNext();){
 				String category = categoriesIterator.next();
 				String value = n.getProperty(FieldMappings.getSystemFieldName(category));
 				if(value != null){
@@ -201,7 +274,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		for(Iterator<HashMap<String, EqualsCondition>> i = counters.values().iterator(); i.hasNext();){
 			for(Iterator<EqualsCondition> it = i.next().values().iterator(); it.hasNext();){
-				it.next().getCounter().reset();
+				it.next().clearPassed();
 			}
 		}
 	}
@@ -221,30 +294,30 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			for(Iterator<String> fieldIterator = catEntry.keySet().iterator(); fieldIterator.hasNext();){
 				String fieldName = fieldIterator.next();
 				EqualsCondition fieldCondition = catEntry.get(fieldName);
-				categoryResults.put(fieldName, fieldCondition.getCounter().getTicks());
+				categoryResults.put(fieldName, fieldCondition.getPassed().size());
 			}
 		}
 		
 		return countedResults;
 	}
 	
-	private JSONObject createFiltersForClient(Screen s){
-		System.out.println("createFilters()");
-		JSONObject filters = new JSONObject();
+	private JSONObject createConditionFieldsForClient(Screen s){
+		System.out.println("createConditionFieldsForClient()");
+		JSONObject fields = new JSONObject();
 		
-		for(Iterator<String> i = this.availableFilterCategories.iterator(); i.hasNext();){
+		for(Iterator<String> i = this.availableConditionFieldCategories.iterator(); i.hasNext();){
 			String category = i.next();
 			if(!category.equals("decade")){
-				filters.put(category, createFilterOptionsArray(s, FieldMappings.getSystemFieldName(category)));
+				fields.put(category, createFieldsForCategoryForClient(s, FieldMappings.getSystemFieldName(category)));
 			}else{
-				filters.put(category, createDecades(s));
+				fields.put(category, createDecadeFields(s));
 			}
 		}
 				
-		return filters;
+		return fields;
 	}
 	
-	private JSONArray createFilterOptionsArray(Screen s, String field){
+	private JSONArray createFieldsForCategoryForClient(Screen s, String category){
 		List<FsNode> nodes;
 		
 		if(s.getProperty("results") == null){
@@ -262,14 +335,13 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			// get the next node
 			FsNode n = (FsNode)iter.next();	
 			
-			String optionsStr = n.getProperty(field);
+			String optionsStr = n.getProperty(category);
 			
 			if(optionsStr != null){		
 				String[] optionsArr = optionsStr.split(",");
 				
 				for(int i = 0; i < optionsArr.length; i++){
-					String option = optionsArr[i];
-					
+					String option = optionsArr[i].trim();
 					if(!options.contains(option) && option != null){
 						options.add(option);
 					}
@@ -294,7 +366,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		return availableOptions;
 	}
 	
-	private JSONArray createDecades(Screen s){
+	private JSONArray createDecadeFields(Screen s){
 		JSONArray decades = new JSONArray();
 		
 		int startDecade = 1900;
@@ -310,66 +382,94 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		return decades;
 	}
 	
-	public void populateFiltersClient(Screen s){
-		System.out.println("populateFiltersClient()");
-		JSONObject allFilters = this.createFiltersForClient(s);
+	public void populateFieldsClient(Screen s){
+		System.out.println("populateConditionsFieldsClient()");
+		JSONObject allFilters = this.createConditionFieldsForClient(s);
 		s.setProperty("allFilters", allFilters);
-				
-		this.componentmanager.getComponent("filters").put("", "populateFilters(" + allFilters + ")");
+		
+		s.putMsg("filter", "", "populateFields(" + allFilters + ")");
 	}
 	
 	public void createFilter(Screen s){
 		s.setProperty("filter", new Filter());
 	}
 	
-	public void setFilter(Screen s, String data){
-		System.out.println("setFilter()");
-		JSONObject activeFilters = (JSONObject) s.getProperty("activeFilters");
-		if(activeFilters == null)
-			activeFilters = new JSONObject();
+	/**
+	 * Sets a filter on this screen based on the selection by the user.
+	 * 
+	 * @param s The screen for which the filter was selected
+	 * @param data The data containing the userselection. 
+	 */
+	public void setClientSelectedField(Screen s, String data){
+		System.out.println("setClientSelectedCondition()");
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
+		if(activeFields == null){
+			activeFields = new JSONObject();
+			s.setProperty("clientSelectedFields", activeFields);
+		}
 
-		JSONObject filter = (JSONObject) JSONValue.parse(data);
-		String key = (String) filter.keySet().iterator().next();
-		JSONArray value = (JSONArray) filter.values().iterator().next();
-		activeFilters.put(key, value);
-		s.setProperty("activeFilters", activeFilters);
-		this.componentmanager.getComponent("activefilters").put("", "setActiveFilters(" + activeFilters + ")");
-		createFilterFromSettingsForScreen(s);
+		JSONObject message = (JSONObject) JSONValue.parse(data);
+		System.out.println("MESSAGE: " + message);
+		String category = (String) message.keySet().iterator().next();
+		System.out.println("Category: " + category);
+		String value = (String) message.values().iterator().next();
+		System.out.println("value:" + value);
+		JSONArray fieldsForCategory = (JSONArray) activeFields.get(category);
+		
+		if(fieldsForCategory == null){
+			fieldsForCategory = new JSONArray();
+			activeFields.put(category, fieldsForCategory);
+		}
+		
+		fieldsForCategory.add(value);
+		
+		System.out.println(activeFields);
+		
+		s.putMsg("activefields", "", "setActiveFields(" + activeFields + ")");
+		
+		createFilterFromClientSelectionForScreen(s);
+		
+		//Execute the search again in order update the results based on the new filter. 
 		this.search(s);
 	}
 	
-	public void removeFilter(Screen s, String data){
-		JSONObject filterToRemove = (JSONObject) JSONValue.parse(data);
-		JSONObject activeFilters = (JSONObject) s.getProperty("activeFilters");
+	/**
+	 * Removes a filter on this screen based on the selection by the user. 
+	 * 
+	 * @param s The screen for which the filter was removed
+	 * @param data The data containing information as to what filter was removed. 
+	 */
+	public void removeClientSelectedField(Screen s, String data){
+		JSONObject message = (JSONObject) JSONValue.parse(data);
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		
-		String type = (String) filterToRemove.keySet().iterator().next();
-		String toRemove = (String) filterToRemove.values().iterator().next();
+		String category = (String) message.keySet().iterator().next();
+		String field = (String) message.values().iterator().next();
 		
-		JSONArray activeForType = (JSONArray) activeFilters.get(type);
-		activeForType.remove(activeForType.indexOf(toRemove));
-		if(activeForType.isEmpty()){
-			activeFilters.remove(type);
+		JSONArray activeForCategory = (JSONArray) activeFields.get(category);
+		activeForCategory.remove(activeForCategory.indexOf(field));
+		if(activeForCategory.isEmpty()){
+			activeFields.remove(category);
 		}
-		createFilterFromSettingsForScreen(s);
+		createFilterFromClientSelectionForScreen(s);
 		this.search(s);
 	}
 	
-	private ArrayList<FilterCondition> createEqualsConditionsForField(String field, ArrayList<String> allowedValues){
-		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
-		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
-			conditions.add(new EqualsCondition(field, i.next(), ","));
-		}
-		return conditions;
-	}
-	
-	private void createFilterFromSettingsForScreen(Screen s){
-		JSONObject activeFilters = (JSONObject) s.getProperty("activeFilters");
+	/**
+	 * Used to create a Filter object from the clientSelectedFilters variable saved on the Screen object.
+	 * 
+	 * @param s The screen object on which the client selection is set. 
+	 */
+	private void createFilterFromClientSelectionForScreen(Screen s){
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		AndCondition andCondition = new AndCondition();
 		
-		for(Iterator<String> iter = activeFilters.keySet().iterator(); iter.hasNext();){
+		System.out.println(activeFields);
+		
+		for(Iterator<String> iter = activeFields.keySet().iterator(); iter.hasNext();){
 			String key = iter.next();
-			ArrayList<String> allowedValues = (ArrayList) activeFilters.get(key);
+			ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
 			ArrayList<FilterCondition> equalsConditions = new ArrayList<FilterCondition>();
 			equalsConditions = createEqualsConditionsForField(FieldMappings.getSystemFieldName(key), allowedValues);
 			
@@ -380,6 +480,14 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		conditions.add(andCondition);
 		
 		s.setProperty("filter", new Filter(conditions));
+	}
+	
+	private ArrayList<FilterCondition> createEqualsConditionsForField(String field, ArrayList<String> allowedValues){
+		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
+		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
+			conditions.add(new EqualsCondition(field, i.next(), ","));
+		}
+		return conditions;
 	}
 
 }

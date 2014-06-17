@@ -31,7 +31,6 @@ public class AndCondition extends FilterCondition {
 				return false;
 			}
 		}
-		this.getCounter().tick();
 		return true;
 	}
 

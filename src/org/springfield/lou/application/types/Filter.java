@@ -37,9 +37,7 @@ public class Filter {
 		List<FsNode> results = new ArrayList<FsNode>();
 		
 		if(this.conditions.size() > 0){
-			int i = 1;
 			for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
-				System.out.println("DO ITERATION: " + i);
 				FsNode n = (FsNode)iter.next();	
 				for(Iterator<FilterCondition> condIter = this.conditions.iterator(); condIter.hasNext();){
 					IFilterCondition condition = condIter.next();
@@ -48,13 +46,15 @@ public class Filter {
 						break;
 					}
 				}
-				i++;
-				System.out.println("END ITERATION: " + i + "!");
 			}	
 			return results;
 		}
 		return nodes;
 		
+	}
+
+	public ArrayList<FilterCondition> getConditions() {
+		return conditions;
 	}
  
 }

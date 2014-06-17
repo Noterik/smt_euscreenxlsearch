@@ -7,7 +7,6 @@ Page.prototype.name = null;
 Page.prototype.init = function () {
     //BIND EVENTS
     this.device = new DeviceDetect().getDevice();
-    this._addBootstrapStylesheet();
     this._bindEvents();
     this._createPopups();
 };
@@ -28,11 +27,6 @@ Page.prototype._bindEvents = function () {
             }
         })(callback));
     }
-};
-Page.prototype._addBootstrapStylesheet = function(){
-	var head = jQuery('head');
-    var bootstrapStyleElement = jQuery('<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">');
-    head.append(bootstrapStyleElement);
 };
 Page.prototype._createPopups = function () {
     var popupMethod;

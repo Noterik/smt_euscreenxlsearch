@@ -1,0 +1,114 @@
+<!-- option template -->
+
+<!--<script id="filter-option-template" type="text/template">
+	<% for(var i = 0; i < options.length; i++){ %>
+		<% var option = options[i] %>
+		<option value="<%= option.value %>">
+	    	<%= option.label %>
+	  	</option>
+	<% } %>
+</script>-->
+
+<script id="filter-option-template" type="text/template">
+	<% for(var i = 0; i < options.length; i++){ %>
+		<% var option = options[i] %>
+		<% if(option.value){ %>
+		<li><a href="#" data-value="<%= option.value %>"><%= option.label %></a></li>
+		<% } %>
+	<% } %>
+</script>
+
+<script id="filter-counter-template" type="text/template">
+	<span class="label label-primary pull-right"><%= counter.amount %></span>
+</script>
+
+<!-- end option template -->
+
+<div class="filters col-md-12">
+	<span class="header">FILTERS</span>
+	<div class="accordion" id="filter-accordion">
+	  	<div class="filter">
+	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-language">
+            	LANGUAGES
+            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+	        </a>
+	        <div id="filter-language" class="filtercontent collapse">
+	            <ul class="filter" data-category="language">
+	              <!-- LANGUAGES HERE -->
+	            </ul>
+	        </div>
+	 	</div>
+	 	<div class="filter">
+	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-decade">
+            	DECADES
+            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+	        </a>
+	        <div id="filter-decade" class="filtercontent collapse">
+	            <ul class="filter" data-category="decade">
+	              <!-- LANGUAGES HERE -->
+	            </ul>
+	        </div>
+	 	</div>
+	    <div class="filter">
+	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-topic">
+            	TOPICS
+            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+	        </a>
+	        <div id="filter-topic" class="filtercontent collapse">
+	            <ul class="filter" data-category="topic">
+	              <!-- TOPICS HERE -->
+	            </ul>
+	        </div>
+	 	</div>
+	 	<div class="extrafilters collapse" id="extrafilters" style="height: auto;">
+			<div class="filter">
+		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-provider">
+	            	PROVIDERS
+	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+		        </a>
+		        <div id="filter-provider" class="filtercontent collapse">
+		            <ul class="filter" data-category="provider">
+		              <!-- PROVIDERS HERE -->
+		            </ul>
+		        </div>
+		 	</div>    
+		 	<div class="filter">
+		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-publisher">
+	            	PUBLISHERS
+	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+		        </a>
+		        <div id="filter-publisher" class="filtercontent collapse">
+		            <ul class="filter" data-category="publisher">
+		              <!-- PUBLISHERS HERE -->
+		            </ul>
+		        </div>
+		 	</div>
+		 	<div class="filter">
+		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-genre">
+	            	GENRES
+	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+		        </a>
+		        <div id="filter-genre" class="filtercontent collapse">
+		            <ul class="filter" data-category="genre">
+		              <!-- GENRES HERE -->
+		            </ul>
+		        </div>
+		 	</div>       
+		 	<div class="filter">
+		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-country-production">
+	            	COUNTRIES
+	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+		        </a>
+		        <div id="filter-country-production" class="filtercontent collapse">
+		            <ul class="filter" data-category="country">
+		              <!-- COUNTRIES OF PRODUCTION HERE -->
+		            </ul>
+		        </div>
+		 	</div>           				
+		</div> 
+		<div class="more">
+			<a data-toggle="collapse" id="show-extra-filters" data-target="#extrafilters" style="display: inline;">SHOW MORE</a>
+			<a data-toggle="collapse" id="hide-extra-filters" data-target="#extrafilters" class="collapsed" style="display: none;">SHOW LESS</a>
+		</div>
+	</div>
+</div>

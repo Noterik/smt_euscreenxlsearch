@@ -1,18 +1,25 @@
 package org.springfield.lou.application.types.conditions;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springfield.lou.fs.FsNode;
 
 public abstract class FilterCondition implements IFilterCondition {
 	
-	private ConditionCounter counter;
+	private List<FsNode> passed;
 
 	public FilterCondition() {
 		// TODO Auto-generated constructor stub
-		this.counter = new ConditionCounter();
+		this.passed = new ArrayList<FsNode>();
 	}
 	
-	public ConditionCounter getCounter(){
-		return this.counter;
+	public List<FsNode> getPassed(){
+		return passed;
+	}
+	
+	public void clearPassed(){
+		this.passed.clear();
 	}
 
 }

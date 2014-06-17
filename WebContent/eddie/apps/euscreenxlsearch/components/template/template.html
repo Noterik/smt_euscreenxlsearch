@@ -1,70 +1,48 @@
-<div class="page container">
+<div class="page desktop">
   <header id="header">
   	<!-- HEADER HERE -->
   </header>
-  <main class="search-results">
+  <div class="container main search-results">
     <div class="row">
 
-	  <!-- LEFT COLUMN -->
-      <div class="col-md-4 refine-search">
+	  <!-- left column -->
+      <div class="left col-md-4 col-sm-4">
         <div class="row">
-          <div class="col-md-12">
-            <h2>
-              Refine Search
-            </h2>
+          <div class="col-md-12 searchbar" id="searchinput">
+          	<!-- SEARCH INPUT HERE -->
           </div>
         </div>
-        <div class="row active-filters" id="activefilters">
+        <div class="row active-filters" id="activefields">
           <!-- active filters here -->
         </div>
-        <div class="row" id="filters">
+        <div class="row" id="filter">
         	<!-- filters here -->
        	</div>
-        <div class="row">
-          <div class="col-md-12">
-            <p>
-              Did not find what you where looking for?
-              <br/>
-              <br/>
-              Try out the similar search on EUROPEANA.
-              <br/>
-              <br/>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam sollicitudin metus ac neque
-              suscipit, vel varius quam rutrum. Suspendisse nunc nisl, varius nec condimentum et, tempus
-              non erat.
-              Quisque in porttitor turpis, sed pulvinar quam. Fusce consectetur aliquam lectus et
-              sagittis.
-              Curabitur quis tempor diam. Proin imperdiet facilisis ipsum, quis pulvinar diam. Etiam
-              mauris justo,
-              consequat nec consequat non, tincidunt id mauris.
-            </p>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col-md-12">
-            <button class="btn btn-default">
-              Give it a go!
-            </button>
-          </div>
-        </div>
       </div>
 	  <!-- END LEFT COLUMN -->
 
 
 	  <!-- START RIGHT COLUMN -->
-      <div class="col-md-8 search-results">
-		<div class="row" id="searcher">
-			<!-- searcher here -->
-		</div>
+      <div class="right col-md-8 col-sm-8">
+      	<div class="row">
+      		<div class="mediatab col-md-12" id="tabs">
+      			<!-- TABS HERE -->
+      		</div>
+      	</div>
         <!-- /.row -->
-        <div class="row search-results-list" id="results">
+        <div class="row">
+        	<div class="counter col-md-12" id="resulttopbar">
+        		<!-- RESULT TOPBAR HERE -->
+        	</div>
+		</div>
+        <div class="row search-results-list results" id="results">
         	<!-- results here -->
         </div>
       </div>
 	  <!-- END RIGHT COLUMN -->
 
     </div>
-  </main>
+  </div>
   <footer id="footer">
     <!-- FOOTER HERE -->
   </footer>

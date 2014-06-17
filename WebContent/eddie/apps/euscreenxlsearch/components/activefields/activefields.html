@@ -1,0 +1,16 @@
+<script type="text/template" id="active-field-template">
+	<% for(var i = 0; i < activeFields.length; i++){ %>
+	<% var field = activeFields[i] %>
+	<ul class="tag list-inline">
+		<li class="title"><%= field.category %></li>
+		<li class="content"><%= field.value %></li>
+		<li class="action"><a data-category="<%= field.category %>" data-value="<%= field.value %>" href="#"><i class="glyphicon glyphicon-remove"></i></a></li>
+	</ul>
+	<% } %>
+</script>
+<div class="selectedfilter col-md-12">
+	<span class="header">SELECTED FILTERS</span>
+	<div class="tags" id="tags">
+		<!-- TAGS HERE -->
+	</div>
+</div>

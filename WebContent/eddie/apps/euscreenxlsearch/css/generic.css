@@ -4,6 +4,11 @@
 * This file contains the generic styles which are to be applied on all devices for EUScreenXLPagePrototypes.
 * Certain device may override these styles in their own stylesheet.
 */
+
+#synctime{
+	display: none;
+}
+
 .euscr-popup {
     display: none;
 }
@@ -55,14 +60,6 @@ ul.no-break li {
 
 
 /*desktop.css*/
-.active-filters {
-    margin-bottom: 15px;
-}
-
-.active-filters .badge.filter {
-    margin: 5px;
-}
-
 .basic-filters {
     margin-top: 5px;
 }
@@ -73,4 +70,12 @@ ul.no-break li {
 
 #hide-extra-filters {
     display: none;
+}
+
+#resulttopbar{
+	display: none;
+}
+
+button.load-more{
+	display: none;
 }
