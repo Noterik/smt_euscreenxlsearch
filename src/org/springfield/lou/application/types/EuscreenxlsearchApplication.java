@@ -60,6 +60,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * the select boxes
 	 */
 	private ArrayList<String> availableConditionFieldCategories;
+	private ArrayList<Integer> decades;
 	
 	/*
 	 * Constructor for the preview application for EUScreen providers
@@ -81,6 +82,10 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		this.availableConditionFieldCategories.add("genre");
 		this.availableConditionFieldCategories.add("country");
 		
+		this.decades = new ArrayList<Integer>();
+		for(int i = 1900; i <= 2010; i += 10){
+			this.decades.add(i);
+		}
 				
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
@@ -137,7 +142,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
 		Integer maxDisplay = (Integer) s.getProperty("maxDisplay");
-		
 		
 		try{
 			if (query.equals("*")) { 
@@ -200,6 +204,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 				result.put("year", node.getProperty(FieldMappings.getSystemFieldName("year")));
 				result.put("language", node.getProperty(FieldMappings.getSystemFieldName("language")));
 				result.put("duration", node.getProperty(FieldMappings.getSystemFieldName("duration")));
+				result.put("id", node.getId());
+								
 				resultsForType.add(result);
 				all.add(result);
 			}
@@ -237,7 +243,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	public void createCounterFilter(Screen s){
 		System.out.println("createCounterFilter()");
 		
-		HashMap<String, HashMap<String, EqualsCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, EqualsCondition>>();
+		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, FilterCondition>>();
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		
 		for(Iterator<FsNode> iter = allNodes.getNodes().iterator() ; iter.hasNext(); ) {
@@ -248,19 +254,30 @@ public class EuscreenxlsearchApplication extends Html5Application{
 				String category = categoriesIterator.next();
 				String value = n.getProperty(FieldMappings.getSystemFieldName(category));
 				if(value != null){
-					HashMap<String, EqualsCondition> catEntry = categorisedConditionsToCount.get(category);
+					HashMap<String, FilterCondition> catEntry = categorisedConditionsToCount.get(category);
 					if(catEntry == null){
-						catEntry = new HashMap<String, EqualsCondition>();
+						catEntry = new HashMap<String, FilterCondition>();
 						categorisedConditionsToCount.put(category, catEntry);
 					}
 					
 					if(catEntry.get(value) == null && !value.contains(",")){
-						EqualsCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value, ",");
+						FilterCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value, ",");
 						catEntry.put(value, condition);
 						conditions.add(condition);
 					}
 				}
 			}
+		}
+		
+		int c = 0;
+		HashMap<String, FilterCondition> decadeEntry = new HashMap<String, FilterCondition>();
+		categorisedConditionsToCount.put("decade", decadeEntry);
+		for(Iterator<Integer> i = this.decades.iterator(); i.hasNext();){
+			int decade = i.next();
+			
+			FilterCondition condition = new TimeRangeCondition(decade, decade + 10, FieldMappings.getSystemFieldName("year"));
+			decadeEntry.put("" + decade, condition);
+			conditions.add(condition);
 		}
 		
 		Filter counterFilter = new Filter(conditions);
@@ -270,17 +287,17 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private void resetCounters(Screen s){
-		HashMap<String, HashMap<String, EqualsCondition>> counters = (HashMap<String, HashMap<String, EqualsCondition>>) s.getProperty("counterConditions");
+		HashMap<String, HashMap<String, FilterCondition>> counters = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
 		
-		for(Iterator<HashMap<String, EqualsCondition>> i = counters.values().iterator(); i.hasNext();){
-			for(Iterator<EqualsCondition> it = i.next().values().iterator(); it.hasNext();){
+		for(Iterator<HashMap<String, FilterCondition>> i = counters.values().iterator(); i.hasNext();){
+			for(Iterator<FilterCondition> it = i.next().values().iterator(); it.hasNext();){
 				it.next().clearPassed();
 			}
 		}
 	}
 	
 	private JSONObject getCounterClient(Screen s, List<FsNode> nodes){
-		HashMap<String, HashMap<String, EqualsCondition>> counters = (HashMap<String, HashMap<String, EqualsCondition>>) s.getProperty("counterConditions");
+		HashMap<String, HashMap<String, FilterCondition>> counters = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
 		Filter counterFilter = (Filter) s.getProperty("counterFilter");
 		counterFilter.run(nodes);
 		
@@ -288,12 +305,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		for(Iterator<String> catIterator = counters.keySet().iterator(); catIterator.hasNext();){
 			String catName = catIterator.next();
-			HashMap<String, EqualsCondition> catEntry = counters.get(catName);
+			HashMap<String, FilterCondition> catEntry = counters.get(catName);
 			JSONObject categoryResults = new JSONObject();
 			countedResults.put(catName, categoryResults);
 			for(Iterator<String> fieldIterator = catEntry.keySet().iterator(); fieldIterator.hasNext();){
 				String fieldName = fieldIterator.next();
-				EqualsCondition fieldCondition = catEntry.get(fieldName);
+				FilterCondition fieldCondition = catEntry.get(fieldName);
 				categoryResults.put(fieldName, fieldCondition.getPassed().size());
 			}
 		}
@@ -369,10 +386,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	private JSONArray createDecadeFields(Screen s){
 		JSONArray decades = new JSONArray();
 		
-		int startDecade = 1900;
-		int endDecade = 2010;
-		
-		for(int decade = startDecade; decade <= endDecade; decade += 10){
+		for(Iterator<Integer> i = this.decades.iterator(); i.hasNext();){
+			int decade = i.next();
 			JSONObject decadeObject = new JSONObject();
 			decadeObject.put("label", decade + "\'s");
 			decadeObject.put("value", decade);
@@ -469,12 +484,21 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		for(Iterator<String> iter = activeFields.keySet().iterator(); iter.hasNext();){
 			String key = iter.next();
-			ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
-			ArrayList<FilterCondition> equalsConditions = new ArrayList<FilterCondition>();
-			equalsConditions = createEqualsConditionsForField(FieldMappings.getSystemFieldName(key), allowedValues);
-			
-			OrCondition orCondition = new OrCondition(equalsConditions);
-			andCondition.add(orCondition);
+			if(!key.equals("decade")){
+				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
+				ArrayList<FilterCondition> equalsConditions = new ArrayList<FilterCondition>();
+				equalsConditions = createEqualsConditionsForField(FieldMappings.getSystemFieldName(key), allowedValues);
+				
+				OrCondition orCondition = new OrCondition(equalsConditions);
+				andCondition.add(orCondition);
+			}else{
+				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
+				ArrayList<FilterCondition> decadeConditions = new ArrayList<FilterCondition>();
+				decadeConditions = createDecadeConditions(FieldMappings.getSystemFieldName("year"), allowedValues);
+				
+				OrCondition orCondition = new OrCondition(decadeConditions);
+				andCondition.add(orCondition);
+			}
 		}
 		
 		conditions.add(andCondition);
@@ -486,6 +510,17 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			conditions.add(new EqualsCondition(field, i.next(), ","));
+		}
+		return conditions;
+	}
+	
+	private ArrayList<FilterCondition> createDecadeConditions(String field, ArrayList<String> allowedValues){
+		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
+		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
+			String startStr = i.next();
+			int startYear = Integer.parseInt(startStr);
+			int stopYear = startYear + 10;
+			conditions.add(new TimeRangeCondition(startYear, stopYear, field));
 		}
 		return conditions;
 	}

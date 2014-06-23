@@ -59,7 +59,6 @@ Results.prototype.setResults = function(results){
 	this.loading(false);
 };
 Results.prototype.renderChunk = function(chunkNo, page){
-	console.log("CHUNKNO: " + chunkNo);
 	var pagesToUpdate = [];
 	
 	if(page){
@@ -71,7 +70,6 @@ Results.prototype.renderChunk = function(chunkNo, page){
 	}	
 	
 	var start = (chunkNo - 1) * this.chunkSize;	
-	console.log("START: " + start);
 	
 	for(var i = 0; i < pagesToUpdate.length; i++){
 		var page = pagesToUpdate[i];
@@ -90,8 +88,16 @@ Results.prototype.renderChunk = function(chunkNo, page){
 			var item = this.currentResults[page][c];
 			if(item){
 				var elementStr = _.template(this.template, {item: item});
-				this.pages[page].element.find('.list').append(elementStr);
+				var itemElement = jQuery(elementStr);
+				
+				itemElement.on('click', (function(item){
+					return function(event){
+						window.location = 'http://player7.noterik.com/lou/domain/euscreen/html5application/euscreenxlitem?id=' + item.data('id');
+					}
+				})(itemElement));
+				this.pages[page].element.find('.list').append(itemElement);
 			}
 		}
 	}
+	
 };

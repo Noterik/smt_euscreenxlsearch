@@ -1,5 +1,5 @@
 <script class="result-template" type="text/template">
-	<div class="row media-item">
+	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-xs-4 col-sm-5 col-xs-5">
 	    <div class="media-wrapper">
 	      <img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://images1.noterik.com/domain/euscreen/thumbs/7/7/EUS_7724608B7F54413B9C3EAFAEFC0B072E.jpg')} %>">

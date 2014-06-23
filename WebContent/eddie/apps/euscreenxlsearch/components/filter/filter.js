@@ -83,7 +83,7 @@ Filter.prototype.fieldClicked = function(event){
 	var objectToSend = {};
 	
 	if(fieldVal){
-		objectToSend[category] = fieldVal;
+		objectToSend[category] = "" + fieldVal;
 		
 		eddie.putLou("", "setfield(" + JSON.stringify(objectToSend) + ")");
 	}
