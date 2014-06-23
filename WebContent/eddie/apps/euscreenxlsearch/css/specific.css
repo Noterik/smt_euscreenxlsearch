@@ -319,7 +319,7 @@ textarea.page .main .left .row .searchbar .form-control {
   z-index: 7;
 }
 .page .main .right .row .results .media-item .media-wrapper .media-type {
-  background: url("/eddie/img/euscreenxlsearch/sprites.png");
+  background: url("/eddie/img/euscreenxl/sprites.png");
   position: absolute;
   bottom: 0;
   right: 0;
