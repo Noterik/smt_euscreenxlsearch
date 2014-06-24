@@ -1,0 +1,23 @@
+
+setUrlTrigger(/lou/euscreen/item.html,/lou/domain/webtv/html5application/euscreenxlitem)
+setUrlTrigger(/lou/euscreen/item/,/lou/domain/webtv/html5application/euscreenxlitem)
+loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
+loadStyleSheet(screen,all)
+loadStyleSheet(screen,generic) // load the generic stylesheet
+loadStylesheet(screen,specific)
+setRole(screen,"itempage")
+loadContent(screen,template)
+loadContent(screen,header)
+loadContent(screen,footer)
+loadContent(screen,activefields)
+loadContent(screen,filter)
+loadContent(screen,results)
+loadContent(screen,searchinput)
+loadContent(screen,tabs)
+loadContent(screen,resulttopbar)
+loadContent(screen,resultcounter)
+loadContent(screen,resultsorter)
+callServer(setDefaultSorting,screen,content)
+callServer(populateFieldsClient,screen,content)
+callServer(createFilter,screen,content)
+callServer(createCounterFilter,screen,content)
