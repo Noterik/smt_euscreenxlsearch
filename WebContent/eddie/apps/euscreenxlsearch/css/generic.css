@@ -35,7 +35,7 @@ ul.no-break li {
     list-style: none;
 }
 
-.page main .label {
+.page .label {
     margin: 0 5px 0 0;
     color: dodgerblue;
 }
