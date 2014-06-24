@@ -1,6 +1,6 @@
 
-setUrlTrigger(/lou/euscreen/item.html,/lou/domain/webtv/html5application/euscreenxlitem)
-setUrlTrigger(/lou/euscreen/item/,/lou/domain/webtv/html5application/euscreenxlitem)
+setUrlTrigger(/lou/euscreen/search.html,/lou/domain/webtv/html5application/euscreenxsearch)
+setUrlTrigger(/lou/euscreen/,/lou/domain/webtv/html5application/euscreenxsearch)
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
 loadStyleSheet(screen,all)
 loadStyleSheet(screen,generic) // load the generic stylesheet
