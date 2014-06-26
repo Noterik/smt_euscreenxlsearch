@@ -11,6 +11,7 @@ import org.springfield.lou.application.types.conditions.IFilterCondition;
 
 public class Filter {
 	
+	/* ADDED IN NEW BRANCH */
 	private ArrayList<FilterCondition> conditions;
 	
 	public Filter(){
