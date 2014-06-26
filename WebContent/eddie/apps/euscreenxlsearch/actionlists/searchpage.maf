@@ -1,9 +1,10 @@
+.when device=desktop
 setUrlTrigger(/lou/euscreen/search.html,/lou/domain/webtv/html5application/euscreenxlsearch)
 setUrlTrigger(/lou/euscreen/,/lou/domain/webtv/html5application/euscreenxlsearch)
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,all)
+loadStyleSheet(screen,all_khris)
 loadStyleSheet(screen,generic) // load the generic stylesheet
-loadStylesheet(screen,specific)
+loadStylesheet(screen,specific_khris)
 setRole(screen,"itempage")
 loadContent(screen,template)
 loadContent(screen,header)
@@ -13,6 +14,29 @@ loadContent(screen,filter)
 loadContent(screen,results)
 loadContent(screen,searchinput)
 loadContent(screen,tabs)
+loadContent(screen,resulttopbar)
+loadContent(screen,resultcounter)
+loadContent(screen,resultsorter)
+callServer(setDefaultSorting,screen,content)
+callServer(populateFieldsClient,screen,content)
+callServer(createFilter,screen,content)
+callServer(createCounterFilter,screen,content)
+
+.when device=iphone
+loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
+loadStyleSheet(screen,all_khris)
+loadStyleSheet(screen,generic) // load the generic stylesheet
+loadStylesheet(screen,specific_khris)
+setRole(screen,"itempage")
+loadContent(screen,mobiletemplate)
+loadContent(screen,mobilenav)
+loadContent(screen,header)
+loadContent(screen,footer)
+loadContent(screen,activefields)
+loadContent(screen,filter)
+loadContent(screen,mediaselector)
+loadContent(screen,mobileresults)
+loadContent(screen,mobilesearchinput)
 loadContent(screen,resulttopbar)
 loadContent(screen,resultcounter)
 loadContent(screen,resultsorter)

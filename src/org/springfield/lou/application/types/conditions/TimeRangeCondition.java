@@ -28,15 +28,19 @@ public class TimeRangeCondition extends FilterCondition {
 	public boolean allow(FsNode node) {
 		// TODO Auto-generated method stub
 		
-		int year = Integer.parseInt(node.getProperty(field));
-		calendar.clear();
-		calendar.set(Calendar.YEAR, year);
-		
-		Date date = calendar.getTime();
-		
-		if(timeStart.before(date) && timeEnd.after(date)){
-			this.getPassed().add(node);
-			return true;
+		try{
+			int year = Integer.parseInt(node.getProperty(field));
+			calendar.clear();
+			calendar.set(Calendar.YEAR, year);
+			
+			Date date = calendar.getTime();
+			
+			if(timeStart.before(date) && timeEnd.after(date)){
+				this.getPassed().add(node);
+				return true;
+			}
+		}catch(NumberFormatException nfe){
+			System.out.println("No date set!");
 		}
 		
 		return false;

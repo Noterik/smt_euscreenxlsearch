@@ -2,7 +2,7 @@ var Searchinput = function(options){
 	var self = this;
 	
 	this.element = jQuery("#searchinput");
-	this.searchQueryInput = this.element.find('.search-input-form-element');
+	this.searchQueryInput = this.element.find('#searchkeyword');
 	
 	this.searchQueryInput.keyup(function(event){
 		if(event.keyCode === 13){
@@ -12,7 +12,7 @@ var Searchinput = function(options){
 };
 Searchinput.prototype = Object.create(Component);
 Searchinput.prototype.events = {
-	"onkeyup #searchinput .search-input-form-element": function(event){
+	"onkeyup #searchinput #searchkeyword": function(event){
 		if (e.keyCode === 13) {
 			this.search();
 		}

@@ -19,7 +19,7 @@
 </script>
 
 <script id="filter-counter-template" type="text/template">
-	<span class="label label-primary pull-right"><%= counter.amount %></span>
+	<span class="badge label-primary pull-right"><%= counter.amount %></span>
 </script>
 
 <!-- end option template -->
@@ -27,88 +27,104 @@
 <div class="filters col-md-12">
 	<span class="header">FILTERS</span>
 	<div class="accordion" id="filter-accordion">
-	  	<div class="filter">
-	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-language">
-            	LANGUAGES
-            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-	        </a>
-	        <div id="filter-language" class="filtercontent collapse">
-	            <ul class="filter" data-category="language">
-	              <!-- LANGUAGES HERE -->
-	            </ul>
-	        </div>
-	 	</div>
-	 	<div class="filter">
-	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-decade">
-            	DECADES
-            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-	        </a>
-	        <div id="filter-decade" class="filtercontent collapse">
-	            <ul class="filter" data-category="decade">
-	              <!-- LANGUAGES HERE -->
-	            </ul>
-	        </div>
-	 	</div>
-	    <div class="filter">
-	  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-topic">
-            	TOPICS
-            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-	        </a>
-	        <div id="filter-topic" class="filtercontent collapse">
-	            <ul class="filter" data-category="topic">
-	              <!-- TOPICS HERE -->
-	            </ul>
-	        </div>
-	 	</div>
-	 	<div class="extrafilters collapse" id="extrafilters" style="height: auto;">
+	  	
+	  	<!-- Language -->
+		<div class="filter">
+			<a class="name" data-toggle="collapse" data-target="#filter-language">
+				LANGUAGES 
+				<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+			</a>
+			<div id="filter-language" class="collapse filtercontent">
+				<ul class="listing" data-category="language">
+					<!-- languages here -->
+				</ul>
+			</div>
+		</div>
+	  	
+	 	<!-- Decades -->
+		<div class="filter">
+			<a class="name" data-toggle="collapse" data-target="#filter-decade">
+				DECADES
+				<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+			</a>
+			<div id="filter-decade" class="collapse filtercontent">
+				<ul class="listing" data-category="decade">
+					<!-- decades here -->
+				</ul>
+			</div>
+		</div>
+		
+	    <!-- Topics -->
+		<div class="filter">
+			<a class="name" data-toggle="collapse" data-target="#filter-topic">
+				TOPICS
+				<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+			</a>
+			<div id="filter-topic" class="collapse filtercontent">
+				<ul class="listing" data-category="topic">
+					<!-- topics here -->
+				</ul>
+			</div>
+		</div>
+	    
+	    <!-- extra filters -->
+	 	<div class="extrafilters collapse hidden-xs" id="extrafilters">
+	 		
+	 		<!-- providers -->
 			<div class="filter">
-		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-provider">
-	            	PROVIDERS
-	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-		        </a>
-		        <div id="filter-provider" class="filtercontent collapse">
-		            <ul class="filter" data-category="provider">
-		              <!-- PROVIDERS HERE -->
-		            </ul>
-		        </div>
-		 	</div>    
-		 	<div class="filter">
-		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-publisher">
-	            	PUBLISHERS
-	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-		        </a>
-		        <div id="filter-publisher" class="filtercontent collapse">
-		            <ul class="filter" data-category="publisher">
-		              <!-- PUBLISHERS HERE -->
-		            </ul>
-		        </div>
-		 	</div>
-		 	<div class="filter">
-		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-genre">
-	            	GENRES
-	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
-		        </a>
-		        <div id="filter-genre" class="filtercontent collapse">
-		            <ul class="filter" data-category="genre">
-		              <!-- GENRES HERE -->
-		            </ul>
-		        </div>
-		 	</div>       
+				<a class="name" data-toggle="collapse" data-target="#filter-provider">
+					PROVIDERS
+					<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+				</a>
+				<div id="filter-provider" class="collapse filtercontent">
+    				<ul class="listing" data-category="provider">
+    					<!-- providers here -->
+					</ul>
+				</div>
+			</div>
+
+		 	<!-- Publisher -->
+			<div class="filter">
+				<a class="name" data-toggle="collapse" data-target="#filter-publisher">
+					PUBLISHER
+					<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+				</a>
+				<div id="filter-publisher" class="collapse filtercontent">
+    				<ul class="listing" data-category="publisher">
+						<!-- publishers here -->
+					</ul>
+				</div>
+			</div>
+			
+			<!-- genres -->
+			<div class="filter">
+				<a class="name" data-toggle="collapse" data-target="#filter-genre">
+					GENRE
+					<i class="glyphicon glyphicon-chevron-down pull-right"></i>
+				</a>
+				<div id="filter-genre" class="collapse filtercontent">
+    				<ul class="listing" data-category="genre">
+						<!-- genres here -->
+					</ul>
+				</div>
+			</div>
+			
+			<!-- country of production -->
 		 	<div class="filter">
 		  		<a class="name" data-toggle="collapse" data-parent="#filter-accordion" href="#filter-country-production">
-	            	COUNTRIES
-	            	<i class="glyphicon pull-right glyphicon-chevron-down"></i>
+	            	COUNTRY OF PRODUCTION
+	            	<i class="glyphicon glyphicon-chevron-down pull-right"></i>
 		        </a>
-		        <div id="filter-country-production" class="filtercontent collapse">
-		            <ul class="filter" data-category="country">
-		              <!-- COUNTRIES OF PRODUCTION HERE -->
-		            </ul>
+		        <div id="filter-country-production" class="collapse filtercontent">
+		           <ul class="listing" data-category="country">
+						<!-- countries here -->
+					</ul>
 		        </div>
 		 	</div>           				
 		</div> 
 		<div class="more">
-			<a data-toggle="collapse" id="show-extra-filters" data-target="#extrafilters" style="display: inline;">SHOW MORE</a>
-			<a data-toggle="collapse" id="hide-extra-filters" data-target="#extrafilters" class="collapsed" style="display: none;">SHOW LESS</a>
+			<a data-toggle="collapse" id="show-extra-filters" data-target="#extrafilters">SHOW MORE</a>
+			<a data-toggle="collapse" id="hide-extra-filters" data-target="#extrafilters">SHOW LESS</a>
 		</div>
 	</div>
 </div>

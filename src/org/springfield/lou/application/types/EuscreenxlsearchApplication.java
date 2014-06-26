@@ -35,7 +35,6 @@ import org.json.simple.JSONValue;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.*;
-
 import java.util.Map.Entry;
 
 import org.springfield.lou.application.Html5Application;
@@ -45,6 +44,7 @@ import org.springfield.lou.application.components.ComponentInterface;
 import org.springfield.lou.application.types.conditions.*;
 import org.springfield.lou.fs.*;
 import org.springfield.lou.homer.LazyHomer;
+import org.springfield.lou.screen.Capabilities;
 import org.springfield.lou.screen.Screen;
 
 
@@ -61,7 +61,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 */
 	private ArrayList<String> availableConditionFieldCategories;
 	private ArrayList<Integer> decades;
-	
+		
 	/*
 	 * Constructor for the preview application for EUScreen providers
 	 * so they can check and debug their uploaded collections.
@@ -106,14 +106,14 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		JSONObject queryData = (JSONObject) JSONValue.parse(data);
 		
 		String query = (String) queryData.get("query");
+		
+		if(query.equals("")){
+			query = "*";
+		}
+		
 		query = query.toLowerCase();
 		
-		//If the query is empty, set the query to * to return all
-		if(query.equals("")){
-			s.setProperty("searchQuery", "*");
-		}else{
-			s.setProperty("searchQuery", query);
-		}
+		s.setProperty("searchQuery", query);
 		
 		s.setProperty("maxDisplay", 20);
 		search(s);
@@ -136,9 +136,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		//Get the search parameter from the Screen object
 		String query = (String) s.getProperty("searchQuery");
-		if(query == null){
-			query = "*";
-		}
+
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
 		Integer maxDisplay = (Integer) s.getProperty("maxDisplay");
@@ -168,11 +166,20 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		s.setProperty("results", nodes);
 		
 		JSONObject results = createResultSet(nodes);
-		
+
 		s.putMsg("resultcounter", "", "setAmount(" + nodes.size() + ")");
 		s.putMsg("resulttopbar", "", "show()");
-		s.putMsg("results", "", "setResults(" + results + ")");
 		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s, nodes) + ")");
+		
+		this.setResultsOnClient(s, results);
+	}
+	
+	private void setResultsOnClient(Screen s, JSONObject results){
+		if(s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape")){
+			s.putMsg("mobileresults", "", "setResults(" + results + ")");
+		}else{
+			s.putMsg("results", "", "setResults(" + results + ")");
+		}
 	}
 	
 	private JSONObject createResultSet(List<FsNode> nodes){

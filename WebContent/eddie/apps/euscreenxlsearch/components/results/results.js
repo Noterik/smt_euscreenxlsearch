@@ -36,7 +36,7 @@ var Results = function(options){
 Results.prototype = Object.create(Component.prototype);
 Results.prototype.chunkSize = 10;
 Results.prototype.events = {
-	"click .more a": function(event, element){
+	"click #results .more a": function(event, element){
 		event.preventDefault();
 		var page = $(event.srcElement).data('page');
 		this.renderChunk(this.pages[page].currentChunk + 1, page);
@@ -90,7 +90,7 @@ Results.prototype.renderChunk = function(chunkNo, page){
 				var elementStr = _.template(this.template, {item: item});
 				var itemElement = jQuery(elementStr);
 				
-				itemElement.on('click', (function(item){
+				itemElement.find('img').on('click', (function(item){
 					return function(event){
 						window.location = 'http://player7.noterik.com/lou/domain/euscreen/html5application/euscreenxlitem?id=' + item.data('id');
 					}

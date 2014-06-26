@@ -62,11 +62,13 @@ Filter.prototype.setCounts = function(data){
 	
 	var fields = JSON.parse(data);
 	
+	console.log(fields);
+	
 	for(var category in fields){
 		var counts = fields[category];
 		self.fieldElements[category].find('li').hide();
 		for(var value in counts){
-			self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span.label').remove();
+			self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span.badge').remove();
 			if(!counts[value] == 0){
 				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().append(_.template(self.counterTemplate, {counter: {amount: counts[value]}}));
 				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().show();
