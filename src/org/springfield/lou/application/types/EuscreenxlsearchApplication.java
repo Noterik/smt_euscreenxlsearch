@@ -114,8 +114,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		query = query.toLowerCase();
 		
 		s.setProperty("searchQuery", query);
-		
-		s.setProperty("maxDisplay", 20);
+		s.setProperty("chunkSize", 10);
 		search(s);
 	}
 	
@@ -126,6 +125,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 */
 	public void search(Screen s){
 		System.out.println("search()");
+		
+		this.clearResults(s);
 		
 		// lets get the nodes from the fslist, depending on input we get them all or
 		// filtered and sorted
@@ -139,7 +140,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
-		Integer maxDisplay = (Integer) s.getProperty("maxDisplay");
 		
 		try{
 			if (query.equals("*")) { 
@@ -162,20 +162,45 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
-						
-		s.setProperty("results", nodes);
+		
+		s.setProperty("rawNodes", nodes);
 		
 		JSONObject results = createResultSet(nodes);
-
-		s.putMsg("resultcounter", "", "setAmount(" + nodes.size() + ")");
-		s.putMsg("resulttopbar", "", "show()");
-		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s, nodes) + ")");
+		s.setProperty("results", results);
 		
-		this.setResultsOnClient(s, results);
+		
+		s.putMsg("resulttopbar", "", "show()");
+		this.setResultAmountOnClient(s);
+		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s) + ")");
+		
+		this.createTypeChunking(s);
+		this.getNextChunk(s);
+	}
+	
+	private void setResultAmountOnClient(Screen s){
+		JSONObject results = (JSONObject) s.getProperty("results");
+		String activeType = (String) s.getProperty("activeType");
+		JSONArray resultsForType = (JSONArray) results.get(activeType);
+		s.putMsg("resultcounter", "", "setAmount(" + resultsForType.size() + ")");
+	}
+	
+	public void setDefaultType(Screen s){
+		s.setProperty("activeType", "all");
+	}
+	
+	private void clearResults(Screen s){
+		System.out.println("clearResults()");
+		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
+			System.out.println("THIS IS A MOBILE DEVICE!");
+			s.putMsg("mobileresults", "", "clear()");
+		}else{
+			System.out.println("THIS IS A DESKTOP!");
+			s.putMsg("results", "", "clear()");
+		}
 	}
 	
 	private void setResultsOnClient(Screen s, JSONObject results){
-		if(s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape")){
+		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
 			s.putMsg("mobileresults", "", "setResults(" + results + ")");
 		}else{
 			s.putMsg("results", "", "setResults(" + results + ")");
@@ -234,6 +259,70 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		Filter filter = new Filter(types);
 		return filter;
 	};
+	
+	public void createTypeChunking(Screen s){
+		System.out.println("createTypeChunking()");
+		HashMap<String, Integer> types = new HashMap<String, Integer>();
+	 
+		types.put("all", 1);
+		types.put("video", 1);
+		types.put("picture", 1);
+		types.put("doc", 1);
+		types.put("audio", 1);
+		
+		s.setProperty("typesChunks", types);
+		System.out.println(types);
+	}
+	
+	public void setActiveType(Screen s, String type){
+		System.out.println("setActiveType(" + type + ")");
+		this.clearResults(s);
+		s.setProperty("activeType", type);	
+		
+		this.resetCounters(s);
+		this.setResultAmountOnClient(s);
+		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s) + ")");
+		sendChunkToClient(s);
+	};
+	
+	public void getNextChunk(Screen s){
+		HashMap<String, Integer> types = (HashMap<String, Integer>) s.getProperty("typesChunks");
+		String type = (String) s.getProperty("activeType");
+		
+		types.put(type, types.get(type) + 1);
+		sendChunkToClient(s);
+	};
+	
+	private void sendChunkToClient(Screen s){
+		System.out.println("sendChunkToClient()");
+		JSONObject chunk = new JSONObject();
+		String activeType = (String) s.getProperty("activeType");
+		JSONArray values = new JSONArray();
+		chunk.put(activeType, values);
+		JSONObject results = (JSONObject) s.getProperty("results");
+		JSONArray resultsForType = (JSONArray) results.get(activeType);
+		int itemsPerChunk = (Integer) s.getProperty("chunkSize");
+		
+		HashMap<String, Integer> chunksForType = (HashMap<String, Integer>) s.getProperty("typesChunks");
+		int currentChunk = chunksForType.get(activeType);
+		
+		int start = (currentChunk - 1) * itemsPerChunk;
+		int end = start + itemsPerChunk;
+		
+		if((start + end) > resultsForType.size()){
+			end = resultsForType.size() - 1;
+		}
+		
+		values.addAll(0, resultsForType.subList(start, end));
+		
+		String command = "setResults(" + chunk + ")";
+		
+		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
+			s.putMsg("mobileresults", "", command);
+		}else{
+			s.putMsg("results", "", command);
+		}
+	}
 	
 	public void setDefaultSorting(Screen s){
 		s.setProperty("sortDirection", "up");
@@ -303,9 +392,28 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}
 	}
 	
-	private JSONObject getCounterClient(Screen s, List<FsNode> nodes){
+	private JSONObject getCounterClient(Screen s){
+		List<FsNode> nodesToFilter = (List<FsNode>) s.getProperty("rawNodes");
+		String type = (String) s.getProperty("activeType");
+		
+		List<FsNode> nodes;
+		
+		if(!type.equals("all")){
+			System.out.println("THIS IS NOT TYPE ALL!!");
+			System.out.println("TYPE:" + type);
+			Filter typeFilter = new Filter();
+			typeFilter.addCondition(new TypeCondition(type));
+			
+			nodes = typeFilter.apply(nodesToFilter);
+			
+			System.out.println(nodes.size());
+		}else{
+			nodes = nodesToFilter;
+		}
+		
 		HashMap<String, HashMap<String, FilterCondition>> counters = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
 		Filter counterFilter = (Filter) s.getProperty("counterFilter");
+		
 		counterFilter.run(nodes);
 		
 		JSONObject countedResults = new JSONObject();
@@ -342,15 +450,9 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private JSONArray createFieldsForCategoryForClient(Screen s, String category){
-		List<FsNode> nodes;
-		
-		if(s.getProperty("results") == null){
-			String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
-			FSList fslist = FSListManager.get(uri);
-			nodes = fslist.getNodes();
-		}else{
-			nodes = (List<FsNode>) s.getProperty("results");
-		}
+		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
+		FSList fslist = FSListManager.get(uri);
+		List<FsNode> nodes = fslist.getNodes();
 		
 		JSONArray availableOptions = new JSONArray();
 		ArrayList<String> options = new ArrayList<String>();
