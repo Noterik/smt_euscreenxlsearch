@@ -8,6 +8,8 @@ var Mediaselector = function(options){
 Mediaselector.prototype = Object.create(Component.prototype);
 Mediaselector.prototype.events = {
 	"change #mediaselector .form-control": function(event){
-		eddie.putLou('mobileresults', 'setVisibleType(' + this.selectBox.find(':selected').val() + ')');
+		eddie.putLou('', 'setActiveType(' + this.selectBox.find(':selected').val() + ')');
+		jQuery('#search-parameters').removeClass('optionOpened');
+		jQuery("#mobilesearchinput #optionbutton").removeClass('active');
 	}
 };
