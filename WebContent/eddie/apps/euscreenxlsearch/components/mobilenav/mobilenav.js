@@ -3,11 +3,7 @@ var Mobilenav = function(options){
 	Component.apply(this, arguments);
 	
 	this.element = jQuery('#mobilenav');
-	
-	console.log(this.element[0]);
-	
-	console.log(this.element.slidePanelJS);
-	
+			
 	setTimeout(function(){
 		self.element.slidePanelJS({
 	        openButton: '#menubutton',
@@ -18,8 +14,6 @@ var Mobilenav = function(options){
 	    
 	}, 100);
 	// nav panel
-    
-    console.log("SLIDE PANEL INITIALIZED!");
 };
 
 Mobilenav.prototype = Object.create(Component.prototype);

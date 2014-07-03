@@ -25,7 +25,6 @@ Activefields.prototype.setActiveFields = function(data){
 	
 	this.activeFieldsElement.html(_.template(this.fieldTemplate, templateObject));
 	this.activeFieldsElement.find("ul.tag li.action a").off("click").click(function(event){
-		console.log("REMOVE THIS SHIT!");
 		var parent = jQuery(this).parent().parent();
 		var type = jQuery(this).data('category');
 		var value = ""+jQuery(this).data('value');

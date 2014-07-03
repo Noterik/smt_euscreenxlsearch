@@ -43,9 +43,6 @@ Results.prototype.clear = function(){
 	}
 };
 Results.prototype.setResults = function(results){	
-	console.log("Results.setResults()");
-	console.log(JSON.parse(results));
-	//this.clear();
 	var results = JSON.parse(results);
 	
 	for(var type in results){

@@ -90,3 +90,33 @@ Filter.prototype.fieldClicked = function(event){
 		eddie.putLou("", "setfield(" + JSON.stringify(objectToSend) + ")");
 	}
 };
+Filter.prototype.deactivateCategory = function(data){
+	console.log("deactivateCategory()");
+	var message = JSON.parse(data);
+	
+	var category = message.category;
+	var a = this.fieldElements[category].parent().parent().find('> a');
+	
+	this.fieldElements[category].parent().removeClass('in').addClass('out');
+	
+	
+	a.addClass('inactive');
+	a.on('click', function(){
+		event.stopPropagation();
+	});
+	
+	a.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
+	a.find('i').hide();
+};
+Filter.prototype.activateCategory = function(data){
+	console.log("activateCategory()");
+	var message = JSON.parse(data);
+	
+	var category = message.category;
+	var a = this.fieldElements[category].parent().parent().find('> a');
+	
+	a.removeClass('inactive');
+	a.off('click');
+	
+	a.find('i').show();
+}

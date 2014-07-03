@@ -8,3 +8,7 @@
 #synctime{
 	display: none;
 }
+
+.filters .accordion .filter a.inactive{
+	background-color: lightgrey;
+}

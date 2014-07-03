@@ -163,18 +163,21 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
 		
+		System.out.println("NODES");
+		System.out.println(nodes.size());
+		System.out.println("END NODES!");
+		
 		s.setProperty("rawNodes", nodes);
 		
 		JSONObject results = createResultSet(nodes);
 		s.setProperty("results", results);
-		
 		
 		s.putMsg("resulttopbar", "", "show()");
 		this.setResultAmountOnClient(s);
 		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s) + ")");
 		
 		this.createTypeChunking(s);
-		this.getNextChunk(s);
+		this.sendChunkToClient(s);
 	}
 	
 	private void setResultAmountOnClient(Screen s){
@@ -306,11 +309,14 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		HashMap<String, Integer> chunksForType = (HashMap<String, Integer>) s.getProperty("typesChunks");
 		int currentChunk = chunksForType.get(activeType);
 		
+		System.out.println("CURRENT CHUNK!");
+		System.out.println(currentChunk);
+		
 		int start = (currentChunk - 1) * itemsPerChunk;
 		int end = start + itemsPerChunk;
 		
 		if((start + end) > resultsForType.size()){
-			end = resultsForType.size() - 1;
+			end = resultsForType.size();
 		}
 		
 		values.addAll(0, resultsForType.subList(start, end));
@@ -498,7 +504,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		for(Iterator<Integer> i = this.decades.iterator(); i.hasNext();){
 			int decade = i.next();
 			JSONObject decadeObject = new JSONObject();
-			decadeObject.put("label", decade + "\'s");
+			decadeObject.put("label", decade + "s");
 			decadeObject.put("value", decade);
 			decades.add(decadeObject);
 		}
@@ -551,6 +557,10 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		s.putMsg("activefields", "", "setActiveFields(" + activeFields + ")");
 		
+		JSONObject deactivateMessage = new JSONObject();
+		deactivateMessage.put("category", category);
+		s.putMsg("filter", "", "deactivateCategory(" + deactivateMessage + ")");
+		
 		createFilterFromClientSelectionForScreen(s);
 		
 		//Execute the search again in order update the results based on the new filter. 
@@ -575,6 +585,10 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		if(activeForCategory.isEmpty()){
 			activeFields.remove(category);
 		}
+		
+		JSONObject activateMessage = new JSONObject();
+		activateMessage.put("category", category);
+		s.putMsg("filter", "", "activateCategory(" + activateMessage + ")");
 		createFilterFromClientSelectionForScreen(s);
 		this.search(s);
 	}
