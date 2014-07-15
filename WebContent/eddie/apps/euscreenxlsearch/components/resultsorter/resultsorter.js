@@ -1,5 +1,9 @@
 var Resultsorter = function(options){
 	Component.apply(this, arguments);
+	
+	this.element = jQuery('#resultsorter');
+	this.sortDescButton = this.element.find('.sort-desc');
+	this.sortAscButton = this.element.find('.sort-asc');
 };
 
 Resultsorter.prototype = Object.create(Component.prototype);
@@ -10,5 +14,17 @@ Resultsorter.prototype.events = {
 			direction: "up"
 		};
 		eddie.putLou("", "setsorting(" + JSON.stringify(object) + ")");
+	},
+	"click #resultsorter .sort-asc": function(event){
+		event.preventDefault();
+		this.sortDescButton.removeClass('hide');
+		this.sortAscButton.addClass('hide');
+		eddie.putLou("", "setSortDirection(down)");
+	},
+	"click #resultsorter .sort-desc": function(event){
+		event.preventDefault();
+		this.sortAscButton.removeClass('hide');
+		this.sortDescButton.addClass('hide');
+		eddie.putLou("", "setSortDirection(up)");
 	}
 }

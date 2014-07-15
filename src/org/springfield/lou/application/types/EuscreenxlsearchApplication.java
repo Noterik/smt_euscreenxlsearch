@@ -140,7 +140,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
-		
+				
 		try{
 			if (query.equals("*")) { 
 				if (sortField.equals("id")) {
@@ -163,14 +163,11 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
 		
-		System.out.println("NODES");
-		System.out.println(nodes.size());
-		System.out.println("END NODES!");
-		
 		s.setProperty("rawNodes", nodes);
 		
 		JSONObject results = createResultSet(nodes);
 		s.setProperty("results", results);
+		renderTabs(s);
 		
 		s.putMsg("resulttopbar", "", "show()");
 		this.setResultAmountOnClient(s);
@@ -178,6 +175,25 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		this.createTypeChunking(s);
 		this.sendChunkToClient(s);
+	}
+	
+	private void renderTabs(Screen s){
+		JSONObject message = new JSONObject();
+		JSONObject results = (JSONObject) s.getProperty("results");
+		String activeType = (String) s.getProperty("activeType");
+		for(Iterator<String> i = results.keySet().iterator(); i.hasNext();){
+			String type = i.next();
+			ArrayList resultsForType = (ArrayList) results.get(type);
+			if(resultsForType.size() > 0){
+				message.put(type, true);
+			}else{
+				if(type.equals(activeType)){
+					s.putMsg("tabs", "", "loadTab(all)");
+				}
+				message.put(type, false);
+			}
+		}
+		s.putMsg("tabs", "", "setActiveTabs(" + message + ")");
 	}
 	
 	private void setResultAmountOnClient(Screen s){
@@ -194,10 +210,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	private void clearResults(Screen s){
 		System.out.println("clearResults()");
 		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
-			System.out.println("THIS IS A MOBILE DEVICE!");
 			s.putMsg("mobileresults", "", "clear()");
 		}else{
-			System.out.println("THIS IS A DESKTOP!");
 			s.putMsg("results", "", "clear()");
 		}
 	}
@@ -308,15 +322,15 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		HashMap<String, Integer> chunksForType = (HashMap<String, Integer>) s.getProperty("typesChunks");
 		int currentChunk = chunksForType.get(activeType);
-		
-		System.out.println("CURRENT CHUNK!");
-		System.out.println(currentChunk);
-		
+				
 		int start = (currentChunk - 1) * itemsPerChunk;
 		int end = start + itemsPerChunk;
 		
-		if((start + end) > resultsForType.size()){
+		if((start + end) >= resultsForType.size()){
 			end = resultsForType.size();
+			s.putMsg("results", "", "hideLoadMore()");
+		}else{
+			s.putMsg("results", "", "showLoadMore()");
 		}
 		
 		values.addAll(0, resultsForType.subList(start, end));
@@ -337,8 +351,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	
 	public void setSorting(Screen s, String data){
 		JSONObject message = (JSONObject) JSONValue.parse(data);
-		s.setProperty("sortDirection", message.get("direction"));
 		s.setProperty("sortField", FieldMappings.getSystemFieldName((String) message.get("field")));
+		search(s);
+	}
+	
+	public void setSortDirection(Screen s, String direction){
+		s.setProperty("sortDirection", direction);
 		search(s);
 	}
 	

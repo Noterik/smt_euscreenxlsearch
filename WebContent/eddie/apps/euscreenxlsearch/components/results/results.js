@@ -55,3 +55,9 @@ Results.prototype.setResults = function(results){
 		}
 	}
 };
+Results.prototype.hideLoadMore = function(){
+	this.element.find('a.show-more').hide();
+};
+Results.prototype.showLoadMore = function(){
+	this.element.find('a.show-more').show();
+};

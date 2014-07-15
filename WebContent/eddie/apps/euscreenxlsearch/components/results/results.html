@@ -1,14 +1,16 @@
 <script class="result-template" type="text/template">
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
-	    <div class="media-wrapper">
-	      <img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://images1.noterik.com/domain/euscreen/thumbs/7/7/EUS_7724608B7F54413B9C3EAFAEFC0B072E.jpg')} %>">
-      	  <% if(item.type == "video"){ %>
-		  <span class="media-length"><%= item.duration %></span>
-      	  <% } %>
-      	  <span class="media-hue"><i class="glyphicon glyphicon-play"></i></span>
-      	  <i class="media-type <%= item.type %>"></i>
-	    </div>
+	  	<a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>">
+		    <div class="media-wrapper">
+		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://images1.noterik.com/domain/euscreen/thumbs/7/7/EUS_7724608B7F54413B9C3EAFAEFC0B072E.jpg')} %>">
+	      	  <% if(item.type == "video"){ %>
+			  <span class="media-length"><%= item.duration %></span>
+	      	  <% } %>
+	      	  <span class="media-hue"><i class="glyphicon glyphicon-play"></i></span>
+	      	  <i class="media-type <%= item.type %>"></i>
+		    </div>
+		 </a>
 	  </div>
 	  <div class="media-metadata col-md-8 col-sm-7 col-xs-7">
 	    <a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>"><h3 class="media-heading">
@@ -38,6 +40,7 @@
 		      <%= item.year %>
 		    </span>
 		</span>
+		<% if(item.language && item.type != "picture"){ %>
 		<span class="line">
 		    <span class="label">
 		      Language:
@@ -46,6 +49,7 @@
 		   		<%= item.language %>
 		    </span>
 		</span>
+		<% } %>
 	  </div>
 	</div>
 </script>
@@ -67,7 +71,7 @@
 		</div>
 		<div class="row">
 			<div class="more col-md-12">
-            	<a href="#" data-page="all">SHOW MORE</a>
+            	<a href="#" data-page="all" class="show-more">SHOW MORE</a>
 	  		</div>	
 	  	</div>
 	  </div>
@@ -81,7 +85,7 @@
 		</div>
 		<div class="row">
 			<div class="more col-md-12">
-            	<a href="#" data-page="video">SHOW MORE</a>
+            	<a href="#" data-page="video" class="show-more">SHOW MORE</a>
 	  		</div>	
 	  	</div>
 	  </div>
@@ -95,7 +99,7 @@
 		</div>
 		<div class="row">
 			<div class="more col-md-12">
-            	<a href="#" data-page="picture">SHOW MORE</a>
+            	<a href="#" data-page="picture" class="show-more">SHOW MORE</a>
 	  		</div>	
 	  	</div>
 	  </div>
@@ -109,7 +113,7 @@
 		</div>
 		<div class="row">
 			<div class="more col-md-12">
-            	<a href="#" data-page="audio">SHOW MORE</a>
+            	<a href="#" data-page="audio" class="show-more">SHOW MORE</a>
 	  		</div>	
 	  	</div>
 	  </div>
@@ -123,7 +127,7 @@
 		</div>
 		<div class="row">
 			<div class="more col-md-12">
-            	<a href="#" data-page="doc">SHOW MORE</a>
+            	<a href="#" data-page="doc" class="show-more">SHOW MORE</a>
 	  		</div>	
 	  	</div>
 	  </div>

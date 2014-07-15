@@ -299,12 +299,21 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   -webkit-transition: background 0.2s;
   transition: background 0.2s;
 }
+.page .main .right .row .mediatab .nav li a.inactive{
+	color: #DDDDDD;
+}
 .page .main .right .row .mediatab .nav li a:hover {
   background: #00aeef;
   border-radius: 0px;
   border-right: 1px solid #00aeef;
   color: #ffffff;
   font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+}
+.page .main .right .row .mediatab .nav li a.inactive:hover{
+	background: none;
+  	border-radius: 0px;
+  	border-right: 1px solid #f2f2f2;
+  	color: #DDDDDD;
 }
 .page .main .right .row .mediatab .nav li.active a {
   background: #00aeef;
@@ -313,27 +322,30 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   color: #ffffff;
   font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
 }
-.page .main .right .row .counter {
+.main .right .row .counter {
   background: #fff;
-  font-size: 1.429em;
+  font-size: 1.28em;
   font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
   color: #808080;
   margin: 1px 0 0 0;
   padding: 20px;
 }
-.page .main .right .row .counter:before,
-.page .main .right .row .counter:after {
+.main .right .row .counter:before,
+.main .right .row .counter:after {
   content: " ";
   display: table;
 }
-.page .main .right .row .counter:after {
+.main .right .row .counter:after {
   clear: both;
 }
-.page .main .right .row .counter .pull-left .number {
+.main .right .row .counter .pull-left .number {
   color: #00aeef;
   font-weight: bold;
 }
-.page .main .right .row .counter .pull-right ul.dropdown-menu {
+.main .right .row .counter .pull-right .dropdown {
+  display: inline-block;
+}
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu {
   margin-top: 0px;
   margin-bottom: 0px;
   background: #ffffff;
@@ -342,18 +354,22 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   padding: 1px 1px 0px 1px;
   font-size: 1em;
 }
-.page .main .right .row .counter .pull-right ul.dropdown-menu > .active > a,
-.page .main .right .row .counter .pull-right ul.dropdown-menu > .active > a:hover,
-.page .main .right .row .counter .pull-right ul.dropdown-menu > .active > a:active {
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu > .active > a,
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu > .active > a:hover,
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu > .active > a:active {
   background-image: none;
 }
-.page .main .right .row .counter .pull-right ul.dropdown-menu a {
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu a {
   color: #808080;
   margin-bottom: 1px;
 }
-.page .main .right .row .counter .pull-right ul.dropdown-menu a:hover {
+.main .right .row .counter .pull-right .dropdown ul.dropdown-menu a:hover {
   background-image: none;
   color: #ffffff;
+}
+.main .right .row .counter .pull-right .sortOption {
+  display: inline-block;
+  margin: 0 0 0 10px;
 }
 .page .main .right .row .results {
   background: #fff;
@@ -411,7 +427,7 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   z-index: 7;
 }
 .page .main .right .row .results .media-item .media-wrapper .media-type {
-  background: url("../../img/sprites.png");
+  background: url("/eddie/apps/euscreenxlsearch/img/sprites.png");
   position: absolute;
   bottom: 0;
   right: 0;
@@ -429,12 +445,12 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   height: 15px;
   background-position: -286px 0;
 }
-.page .main .right .row .results .media-item .media-wrapper .media-type.text {
+.page .main .right .row .results .media-item .media-wrapper .media-type.doc {
   width: 16px;
   height: 16px;
   background-position: -304px 0;
 }
-.page .main .right .row .results .media-item .media-wrapper .media-type.image {
+.page .main .right .row .results .media-item .media-wrapper .media-type.picture {
   width: 15px;
   height: 14px;
   background-position: -271px 0;
@@ -476,6 +492,7 @@ textarea.page .main .left .row .searchbar input[type="text"] {
 }
 .page .main .right .row .more a {
   color: #808080;
+   display: none;
 }
 .page .main .right .row .more a:hover {
   color: #00aeef;
