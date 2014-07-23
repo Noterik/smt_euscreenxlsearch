@@ -24,6 +24,7 @@ callServer(setDefaultSorting,screen,content)
 callServer(populateFieldsClient,screen,content)
 callServer(createFilter,screen,content)
 callServer(createCounterFilter,screen,content)
+callServer(setSearchQuery,screen)
 
 .when device=ipad
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
@@ -48,6 +49,7 @@ callServer(setDefaultSorting,screen,content)
 callServer(populateFieldsClient,screen,content)
 callServer(createFilter,screen,content)
 callServer(createCounterFilter,screen,content)
+callServer(setSearchQuery,screen)
 
 .when device=iphone
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
@@ -73,3 +75,4 @@ callServer(setDefaultSorting,screen,content)
 callServer(populateFieldsClient,screen,content)
 callServer(createFilter,screen,content)
 callServer(createCounterFilter,screen,content)
+callServer(setSearchQuery,screen)

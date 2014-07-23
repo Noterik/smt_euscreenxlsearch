@@ -20,31 +20,26 @@
 */
 package org.springfield.lou.application.types;
 
-import java.io.BufferedReader;
-import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
 
-import org.dom4j.Document;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Element;
-import org.dom4j.Node;
-import org.dom4j.Namespace;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.util.*;
-import java.util.Map.Entry;
-
+import org.springfield.fs.FSList;
+import org.springfield.fs.FSListManager;
+import org.springfield.fs.FsNode;
 import org.springfield.lou.application.Html5Application;
-import org.springfield.lou.application.Html5ApplicationInterface;
-import org.springfield.lou.application.components.BasicComponent;
-import org.springfield.lou.application.components.ComponentInterface;
-import org.springfield.lou.application.types.conditions.*;
-import org.springfield.lou.fs.*;
-import org.springfield.lou.homer.LazyHomer;
-import org.springfield.lou.screen.Capabilities;
+import org.springfield.lou.application.types.conditions.AndCondition;
+import org.springfield.lou.application.types.conditions.EqualsCondition;
+import org.springfield.lou.application.types.conditions.FilterCondition;
+import org.springfield.lou.application.types.conditions.OrCondition;
+import org.springfield.lou.application.types.conditions.TimeRangeCondition;
+import org.springfield.lou.application.types.conditions.TypeCondition;
 import org.springfield.lou.screen.Screen;
 
 
@@ -61,6 +56,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 */
 	private ArrayList<String> availableConditionFieldCategories;
 	private ArrayList<Integer> decades;
+	private boolean wantedna = true;
 		
 	/*
 	 * Constructor for the preview application for EUScreen providers
@@ -93,6 +89,15 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		//refer the header and footer elements from euscreenxl element application. 
 		this.addReferid("header", "/euscreenxlelements/header");
 		this.addReferid("footer", "/euscreenxlelements/footer");
+	}
+	
+	public void setSearchQuery(Screen s){
+		System.out.println("setSearchQuery()");
+		if(s.getParameter("query") != null){
+			JSONObject object = new JSONObject();
+			object.put("query", s.getParameter("query"));
+			setSearchQuery(s, object.toString());
+		}
 	}
 	
 	/**
@@ -246,7 +251,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 				
 				JSONObject result = new JSONObject();
 				result.put("type", node.getName());
-				result.put("screenshot", node.getProperty(FieldMappings.getSystemFieldName("screenshot")));
+				result.put("screenshot", this.setEdnaMapping(node.getProperty(FieldMappings.getSystemFieldName("screenshot"))));
 				result.put("title", node.getProperty(FieldMappings.getSystemFieldName("title")));
 				result.put("originalTitle", node.getProperty(FieldMappings.getSystemFieldName("originalTitle")));
 				result.put("provider", node.getProperty(FieldMappings.getSystemFieldName("provider")));
@@ -264,6 +269,20 @@ public class EuscreenxlsearchApplication extends Html5Application{
 				
 		return resultSet;
 	};
+	
+	private String setEdnaMapping(String screenshot) {
+		if(screenshot != null){
+			if (!wantedna) {
+				screenshot = screenshot.replace("edna/", "");
+			} else {
+				int pos = screenshot.indexOf("edna/");
+				if 	(pos!=-1) {
+					screenshot = "http://images.euscreenxl.eu/"+screenshot.substring(pos+5);
+				}
+			}
+		}
+		return screenshot;
+	}
 	
 	private Filter getTypeFilter(){
 		ArrayList<FilterCondition> types = new ArrayList<FilterCondition>();
@@ -361,7 +380,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void createCounterFilter(Screen s){
-		System.out.println("createCounterFilter()");
+		System.out.println("createCounterFilter2()");
 		
 		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, FilterCondition>>();
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
