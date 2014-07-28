@@ -92,7 +92,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void setSearchQuery(Screen s){
-		System.out.println("setSearchQuery()");
 		if(s.getParameter("query") != null){
 			JSONObject object = new JSONObject();
 			object.put("query", s.getParameter("query"));
@@ -107,7 +106,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * @param data The JSONObject containing the search query. 
 	 */
 	public void setSearchQuery(Screen s, String data){
-		System.out.println("setSearchQuery(" + data + ")");
 		JSONObject queryData = (JSONObject) JSONValue.parse(data);
 		
 		String query = (String) queryData.get("query");
@@ -129,7 +127,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * @param s The screen for which to execute the search
 	 */
 	public void search(Screen s){
-		System.out.println("search()");
 		
 		this.clearResults(s);
 		
@@ -163,6 +160,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+		
 		
 		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
 		Filter filter = (Filter) s.getProperty("filter");
@@ -213,7 +211,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private void clearResults(Screen s){
-		System.out.println("clearResults()");
 		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
 			s.putMsg("mobileresults", "", "clear()");
 		}else{
@@ -297,7 +294,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	};
 	
 	public void createTypeChunking(Screen s){
-		System.out.println("createTypeChunking()");
 		HashMap<String, Integer> types = new HashMap<String, Integer>();
 	 
 		types.put("all", 1);
@@ -307,11 +303,9 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		types.put("audio", 1);
 		
 		s.setProperty("typesChunks", types);
-		System.out.println(types);
 	}
 	
 	public void setActiveType(Screen s, String type){
-		System.out.println("setActiveType(" + type + ")");
 		this.clearResults(s);
 		s.setProperty("activeType", type);	
 		
@@ -330,7 +324,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	};
 	
 	private void sendChunkToClient(Screen s){
-		System.out.println("sendChunkToClient()");
 		JSONObject chunk = new JSONObject();
 		String activeType = (String) s.getProperty("activeType");
 		JSONArray values = new JSONArray();
@@ -379,9 +372,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		search(s);
 	}
 	
-	public void createCounterFilter(Screen s){
-		System.out.println("createCounterFilter2()");
-		
+	public void createCounterFilter(Screen s){		
 		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, FilterCondition>>();
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		
@@ -442,14 +433,10 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		List<FsNode> nodes;
 		
 		if(!type.equals("all")){
-			System.out.println("THIS IS NOT TYPE ALL!!");
-			System.out.println("TYPE:" + type);
 			Filter typeFilter = new Filter();
 			typeFilter.addCondition(new TypeCondition(type));
 			
 			nodes = typeFilter.apply(nodesToFilter);
-			
-			System.out.println(nodes.size());
 		}else{
 			nodes = nodesToFilter;
 		}
@@ -477,7 +464,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private JSONObject createConditionFieldsForClient(Screen s){
-		System.out.println("createConditionFieldsForClient()");
 		JSONObject fields = new JSONObject();
 		
 		for(Iterator<String> i = this.availableConditionFieldCategories.iterator(); i.hasNext();){
@@ -550,7 +536,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void populateFieldsClient(Screen s){
-		System.out.println("populateConditionsFieldsClient()");
 		JSONObject allFilters = this.createConditionFieldsForClient(s);
 		s.setProperty("allFilters", allFilters);
 		
@@ -568,7 +553,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * @param data The data containing the userselection. 
 	 */
 	public void setClientSelectedField(Screen s, String data){
-		System.out.println("setClientSelectedCondition()");
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		if(activeFields == null){
 			activeFields = new JSONObject();
@@ -576,11 +560,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}
 
 		JSONObject message = (JSONObject) JSONValue.parse(data);
-		System.out.println("MESSAGE: " + message);
 		String category = (String) message.keySet().iterator().next();
-		System.out.println("Category: " + category);
 		String value = (String) message.values().iterator().next();
-		System.out.println("value:" + value);
 		JSONArray fieldsForCategory = (JSONArray) activeFields.get(category);
 		
 		if(fieldsForCategory == null){
@@ -589,9 +570,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}
 		
 		fieldsForCategory.add(value);
-		
-		System.out.println(activeFields);
-		
+				
 		s.putMsg("activefields", "", "setActiveFields(" + activeFields + ")");
 		
 		JSONObject deactivateMessage = new JSONObject();
@@ -639,9 +618,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		AndCondition andCondition = new AndCondition();
-		
-		System.out.println(activeFields);
-		
+				
 		for(Iterator<String> iter = activeFields.keySet().iterator(); iter.hasNext();){
 			String key = iter.next();
 			if(!key.equals("decade")){

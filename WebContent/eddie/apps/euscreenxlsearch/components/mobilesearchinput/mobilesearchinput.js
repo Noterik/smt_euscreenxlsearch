@@ -40,6 +40,8 @@ Mobilesearchinput.prototype.events = {
 };
 Mobilesearchinput.prototype.search = function(){
 	if(this.searchQueryInput.val().length > 0){
+		console.log("Mobilesearchinput.search()");
+		console.log(this.searchQueryInput.val());
 		var objectToSend = {
 	    	query: this.searchQueryInput.val()
 	    };

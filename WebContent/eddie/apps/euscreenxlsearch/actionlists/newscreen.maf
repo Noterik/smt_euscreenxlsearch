@@ -1,8 +1,8 @@
 .when device=desktop
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,all_khris)
-loadStyleSheet(screen,generic) // load the generic stylesheet
-loadStylesheet(screen,specific_khris_old)
+loadStyleSheet(screen,font-awesome)
+loadStyleSheet(screen,all)
+loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)
 callServer(setDefaultType,screen,content)
@@ -24,15 +24,16 @@ callServer(createCounterFilter,screen,content)
 callServer(setSearchQuery,screen)
 
 .when device=ipad
-loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,all_khris)
-loadStyleSheet(screen,generic) // load the generic stylesheet
-loadStylesheet(screen,specific_khris_old)
+loadStyleSheet(screen,bootstrap)
+loadStyleSheet(screen,font-awesome) //load the bootstrap stylesheet
+loadStyleSheet(screen,all)
+loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)
 callServer(setDefaultType,screen,content)
 loadContent(screen,template)
 loadContent(screen,header)
+loadContent(screen,mobilenav)
 loadContent(screen,footer)
 loadContent(screen,activefields)
 loadContent(screen,filter)
@@ -50,9 +51,9 @@ callServer(setSearchQuery,screen)
 
 .when device=iphone
 loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,all_khris)
-loadStyleSheet(screen,generic) // load the generic stylesheet
-loadStylesheet(screen,specific_khris)
+loadStyleSheet(screen,font-awesome)
+loadStyleSheet(screen,all)
+loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)
 callServer(setDefaultType,screen,content)
