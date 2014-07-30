@@ -9,10 +9,12 @@ var Resultsorter = function(options){
 Resultsorter.prototype = Object.create(Component.prototype);
 Resultsorter.prototype.events = {
 	"click #sortBy li a": function(event){
+		var field = jQuery(event.srcElement).data('field');
 		var object = {
-			field: jQuery(event.srcElement).data('field'),
+			field: field,
 			direction: "up"
 		};
+		this.element.find('.dropdown span.field').text(field.toUpperCase())
 		eddie.putLou("", "setsorting(" + JSON.stringify(object) + ")");
 	},
 	"click #resultsorter .sort-asc": function(event){

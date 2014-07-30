@@ -1,7 +1,5 @@
 .when device=desktop
-loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,font-awesome)
-loadStyleSheet(screen,all)
+loadStyleSheet(screen,generic)
 loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)
@@ -24,9 +22,7 @@ callServer(createCounterFilter,screen,content)
 callServer(setSearchQuery,screen)
 
 .when device=ipad
-loadStyleSheet(screen,bootstrap)
-loadStyleSheet(screen,font-awesome) //load the bootstrap stylesheet
-loadStyleSheet(screen,all)
+loadStyleSheet(screen,generic)
 loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)
@@ -50,9 +46,8 @@ callServer(createCounterFilter,screen,content)
 callServer(setSearchQuery,screen)
 
 .when device=iphone
-loadStyleSheet(screen,bootstrap) //load the bootstrap stylesheet
-loadStyleSheet(screen,font-awesome)
-loadStyleSheet(screen,all)
+callServer(setMobile,screen)
+loadStyleSheet(screen,generic)
 loadStylesheet(screen,specific)
 setRole(screen,"itempage")
 callServer(createTypeChunking,screen,content)

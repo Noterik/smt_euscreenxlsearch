@@ -37,3 +37,9 @@ Mobileresults.prototype.setResults = function(results){
 Mobileresults.prototype.clear = function(){
 	this.list.html('');
 };
+Mobileresults.prototype.hideLoadMore = function(){
+	this.element.find(".more a").hide();
+};
+Mobileresults.prototype.showLoadMore = function(){
+	this.element.find(".more a").show();
+};

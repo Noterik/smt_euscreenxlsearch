@@ -38,6 +38,10 @@ Filter.prototype.events = {
 		this.element.find('#show-extra-filters').show();
 		this.element.find('#hide-extra-filters').hide();
 	},
+	"click #search-parameters .done button": function(event){
+		console.log("CLICK!");
+		jQuery('#search-parameters').removeClass('optionOpened');
+	},
 	"show.bs.collapse .filtercontent": function(event) {
     	$("#"+event.currentTarget.id).parent().find("i").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
     },

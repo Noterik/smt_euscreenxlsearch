@@ -87,8 +87,14 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		setLocationScope("screen"); 
 		
 		//refer the header and footer elements from euscreenxl element application. 
+		this.addReferid("mobilenav", "/euscreenxlelements/mobilenav");
 		this.addReferid("header", "/euscreenxlelements/header");
 		this.addReferid("footer", "/euscreenxlelements/footer");
+	}
+	
+	public void setMobile(Screen s){
+		System.out.println("setMobile()");
+		s.setProperty("mobile", true);
 	}
 	
 	public void setSearchQuery(Screen s){
@@ -165,12 +171,15 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
-		
+				
 		s.setProperty("rawNodes", nodes);
 		
 		JSONObject results = createResultSet(nodes);
 		s.setProperty("results", results);
-		renderTabs(s);
+		
+		if(s.getProperty("mobile") == null){
+			renderTabs(s);
+		}
 		
 		s.putMsg("resulttopbar", "", "show()");
 		this.setResultAmountOnClient(s);
@@ -211,7 +220,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private void clearResults(Screen s){
-		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
+		if(s.getProperty("mobile") != null){
 			s.putMsg("mobileresults", "", "clear()");
 		}else{
 			s.putMsg("results", "", "clear()");
@@ -219,7 +228,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private void setResultsOnClient(Screen s, JSONObject results){
-		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
+		System.out.println("setResultsOnClient()");
+		if(s.getProperty("mobile") != null){
 			s.putMsg("mobileresults", "", "setResults(" + results + ")");
 		}else{
 			s.putMsg("results", "", "setResults(" + results + ")");
@@ -338,18 +348,26 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		int start = (currentChunk - 1) * itemsPerChunk;
 		int end = start + itemsPerChunk;
 		
+		String resultsComp;
+		
+		if(s.getProperty("mobile") != null){
+			resultsComp = "mobileresults";
+		}else{
+			resultsComp = "results";
+		}
+		
 		if((start + end) >= resultsForType.size()){
 			end = resultsForType.size();
-			s.putMsg("results", "", "hideLoadMore()");
+			s.putMsg(resultsComp, "", "hideLoadMore()");
 		}else{
-			s.putMsg("results", "", "showLoadMore()");
+			s.putMsg(resultsComp, "", "showLoadMore()");
 		}
 		
 		values.addAll(0, resultsForType.subList(start, end));
 		
 		String command = "setResults(" + chunk + ")";
 		
-		if(s.getCapabilities() != null && s.getCapabilities().getDeviceModeName() != null && (s.getCapabilities().getDeviceModeName().equals("iphone_portrait") || s.getCapabilities().getDeviceModeName().equals("iphone_landscape"))){
+		if(s.getProperty("mobile") != null){
 			s.putMsg("mobileresults", "", command);
 		}else{
 			s.putMsg("results", "", command);

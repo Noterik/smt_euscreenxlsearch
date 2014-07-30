@@ -24,9 +24,13 @@ Tabs.prototype.setActiveTabs = function(data){
 		if(active){
 			tab.removeClass('inactive');
 			tab.attr('data-toggle', 'tab');
+			tab.off('click');
 		}else{
 			tab.addClass('inactive');
 			tab.attr('data-toggle', '');
+			tab.on('click', function(event){
+				event.preventDefault();
+			});
 		}
 	}
 };

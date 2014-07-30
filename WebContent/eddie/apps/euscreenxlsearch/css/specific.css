@@ -307,6 +307,7 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   transition: background 0.2s;
 }
 .page .main .right .row .mediatab .nav li a.inactive{
+	cursor: not-allowed;
 	color: #DDDDDD;
 }
 .page .main .right .row .mediatab .nav li a:hover {
@@ -434,7 +435,7 @@ textarea.page .main .left .row .searchbar input[type="text"] {
   z-index: 7;
 }
 .page .main .right .row .results .media-item .media-wrapper .media-type {
-  background: url("/eddie/apps/euscreenxlsearch/img/sprites.png");
+  background: url("/eddie/apps/euscreenxlelements/img/sprites.png");
   position: absolute;
   bottom: 0;
   right: 0;
