@@ -48,3 +48,7 @@ Mobilesearchinput.prototype.search = function(){
 	    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
 	}
 };
+Mobilesearchinput.prototype.setQuery = function(query){
+	console.log("mobilesearchinput.prototype.setquery(" + query + ")");
+	this.searchQueryInput.val(query);
+};

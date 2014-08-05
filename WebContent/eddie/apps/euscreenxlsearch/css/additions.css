@@ -1,0 +1,15 @@
+.search .main .right .row .more {
+  padding: 23px 0 0 0;
+}
+
+ul.nav-tabs li a.inactive{
+	color: white!important;
+	background-color: #DFDFDF;
+	cursor: not-allowed;
+}
+
+ul.nav-tabs li a.inactive:hover{
+	color: white!important;
+	background-color: #DFDFDF!important;
+	cursor: not-allowed!important;
+}

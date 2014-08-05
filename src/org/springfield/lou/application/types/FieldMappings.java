@@ -20,6 +20,7 @@ public class FieldMappings {
         mappings.put("publisher", "publisherbroadcaster");
         mappings.put("genre", "genre");
         mappings.put("country", "SpatioTemporalInformation_SpatialInformation_CountryofProduction");
+        mappings.put("sort_title", "sort_title");
     }
     
     public static String getSystemFieldName(String readable){

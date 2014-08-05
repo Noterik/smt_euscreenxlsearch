@@ -7,6 +7,13 @@ var Activefields = function(options){
 };
 
 Activefields.prototype = Object.create(Component.prototype);
+Activefields.prototype.loading = function(loading){
+	if(loading == "true"){
+		this.element.find('.selectedfilter').addClass('loading')
+	}else{
+		this.element.find('.selectedfilter').removeClass('loading');
+	}
+};
 Activefields.prototype.setActiveFields = function(data){
 	var fields = JSON.parse(data);
 	var templateObject = {

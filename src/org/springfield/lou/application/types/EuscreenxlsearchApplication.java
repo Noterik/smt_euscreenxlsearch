@@ -20,6 +20,7 @@
 */
 package org.springfield.lou.application.types;
 
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -56,6 +57,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 */
 	private ArrayList<String> availableConditionFieldCategories;
 	private ArrayList<Integer> decades;
+	private HashMap<String, HashMap<String, FilterCondition>> cachedCategorisedConditions;
+	private Filter cachedCounterFilter;
 	private boolean wantedna = true;
 		
 	/*
@@ -82,6 +85,11 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		for(int i = 1900; i <= 2010; i += 10){
 			this.decades.add(i);
 		}
+		
+		this.cachedCategorisedConditions = this.createCategoryCountsConditions();
+		this.cachedCounterFilter = this.createCounterFilter(this.cachedCategorisedConditions);
+		System.out.println(allNodes.getNodes().size());
+		this.cachedCounterFilter.run(allNodes.getNodes());
 				
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
@@ -92,26 +100,78 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		this.addReferid("footer", "/euscreenxlelements/footer");
 	}
 	
+	public void setInitialCounts(Screen s){
+		s.putMsg("filter", "", "setCounts(" + this.getCounterObject(false) + ")");
+	}
+	
 	public void setMobile(Screen s){
 		System.out.println("setMobile()");
 		s.setProperty("mobile", true);
 	}
 	
-	public void setSearchQuery(Screen s){
+	public void parseURLParams(Screen s){
+		JSONObject startupParameters = new JSONObject();
 		if(s.getParameter("query") != null){
-			JSONObject object = new JSONObject();
-			object.put("query", s.getParameter("query"));
-			setSearchQuery(s, object.toString());
+			String query = (String) s.getParameter("query");
+			s.setProperty("searchQuery", query);
+			System.out.println("MOBILE:");
+			System.out.println(s.getProperty("mobile"));
+			if(s.getProperty("mobile") != null){
+				s.putMsg("mobilesearchinput", "", "setQuery(" + query + ")");
+			}else{
+				s.putMsg("searchinput", "", "setQuery(" + query + ")");
+			}
+			startupParameters.put("query", query);
 		}
-	}
+		
+		if(s.getParameter("sortField") != null){
+			String sortField = (String) s.getParameter("sortField");
+			s.setProperty("sortField", (String) s.getParameter("sortField"));
+			startupParameters.put("sortField", sortField);
+		}	
+		
+		if(s.getParameter("sortDirection") != null){
+			String sortDirection = (String) s.getParameter("sortDirection");
+			s.setProperty("sortDirection", (String) s.getParameter("sortDirection"));
+			startupParameters.put("sortDirection", sortDirection);
+		}
+		
+		if(s.getParameter("activeType") != null){
+			String activeType = (String) s.getParameter("activeType");
+			s.setProperty("activeType", activeType);
+			s.putMsg("tabs", "", "loadTab(" + activeType + ")");
+			startupParameters.put("activeType", activeType);
+		}
+		
+		if(s.getParameter("activeFields") != null){
+			try {
+				String encodedString = (String) s.getParameter("activeFields");
+				startupParameters.put("activeFields", encodedString);
+				String activeFields = java.net.URLDecoder.decode(encodedString, "UTF-8");
+				this.setClientSelectedField(s, activeFields, false);
+			} catch (UnsupportedEncodingException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		s.putMsg("history", "", "setStartupParameters(" + startupParameters + ")");
+		if(s.getProperty("searchQuery") != null){
+			this.search(s);
+		}
+	};
 	
+	public void setSearchQuery(Screen s, String data){
+		this.setSearchQuery(s, data, true);
+	}
+		
 	/**
 	 * Sets the search query on the screen, this will be used to search through the nodes. 
 	 * 
 	 * @param s The screen for which to set the search query.
 	 * @param data The JSONObject containing the search query. 
 	 */
-	public void setSearchQuery(Screen s, String data){
+	public void setSearchQuery(Screen s, String data, boolean refresh){
 		JSONObject queryData = (JSONObject) JSONValue.parse(data);
 		
 		String query = (String) queryData.get("query");
@@ -121,9 +181,11 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}
 		
 		query = query.toLowerCase();
+		if(s.getParameter("query") == null){
+			this.setHistoryParameter(s, "query", query);
+		}
 		
 		s.setProperty("searchQuery", query);
-		s.setProperty("chunkSize", 10);
 		search(s);
 	}
 	
@@ -135,6 +197,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	public void search(Screen s){
 		
 		this.clearResults(s);
+		s.putMsg("results", "", "loading(true)");
 		
 		// lets get the nodes from the fslist, depending on input we get them all or
 		// filtered and sorted
@@ -145,12 +208,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		//Get the search parameter from the Screen object
 		String query = (String) s.getProperty("searchQuery");
-
+		
 		String sortDirection = (String) s.getProperty("sortDirection");
 		String sortField = (String) s.getProperty("sortField");
 				
 		try{
-			if (query.equals("*")) { 
+			if (query == null || query.equals("*")) { 
 				if (sortField.equals("id")) {
 					nodes = allNodes.getNodes(); // get them all unsorted
 				} else {
@@ -171,7 +234,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
 		Filter filter = (Filter) s.getProperty("filter");
 		nodes = filter.apply(nodes);
-				
+						
 		s.setProperty("rawNodes", nodes);
 		
 		JSONObject results = createResultSet(nodes);
@@ -183,10 +246,24 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		s.putMsg("resulttopbar", "", "show()");
 		this.setResultAmountOnClient(s);
-		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s) + ")");
+		
+		JSONObject activeFieldFilters = (JSONObject) s.getProperty("clientSelectedFields");
+		String activeType = (String) s.getProperty("activeType");
+		if(query == null && (activeType == null || activeType.equals("all")) && (activeFieldFilters == null || activeFieldFilters.isEmpty())){
+			s.putMsg("filter", "", "setCounts(" + this.getCounterObject(false) + ")");
+		}else{
+			s.putMsg("filter", "", "setCounts(" + this.getCounterObject(true, s) + ")");
+		}
 		
 		this.createTypeChunking(s);
 		this.sendChunkToClient(s);
+		s.putMsg("results", "", "loading(false)");
+	}
+	
+	private void setHistoryParameter(Screen s, String key, String value){
+		JSONObject historyObject = new JSONObject();
+		historyObject.put(key, value);
+		s.putMsg("history", "", "setParameter(" + historyObject + ")");
 	}
 	
 	private void renderTabs(Screen s){
@@ -312,17 +389,20 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		types.put("doc", 1);
 		types.put("audio", 1);
 		
+		s.setProperty("chunkSize", 10);
 		s.setProperty("typesChunks", types);
 	}
 	
 	public void setActiveType(Screen s, String type){
+		s.putMsg("results", "", "loading(true)");
 		this.clearResults(s);
 		s.setProperty("activeType", type);	
-		
+		this.setHistoryParameter(s, "activeType", type);
 		this.resetCounters(s);
 		this.setResultAmountOnClient(s);
-		s.putMsg("filter", "", "setCounts(" + this.getCounterClient(s) + ")");
+		s.putMsg("filter", "", "setCounts(" + this.getCounterObject(true, s) + ")");
 		sendChunkToClient(s);
+		s.putMsg("results", "", "loading(false)");
 	};
 	
 	public void getNextChunk(Screen s){
@@ -376,21 +456,37 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	
 	public void setDefaultSorting(Screen s){
 		s.setProperty("sortDirection", "up");
-		s.setProperty("sortField", FieldMappings.getSystemFieldName("title"));
+		s.setProperty("sortField", FieldMappings.getSystemFieldName("sort_title"));
 	}
 	
 	public void setSorting(Screen s, String data){
 		JSONObject message = (JSONObject) JSONValue.parse(data);
-		s.setProperty("sortField", FieldMappings.getSystemFieldName((String) message.get("field")));
+		String sortField = FieldMappings.getSystemFieldName((String) message.get("field"));
+		s.setProperty("sortField", sortField);
+		this.setHistoryParameter(s, "sortField", sortField);
 		search(s);
 	}
 	
 	public void setSortDirection(Screen s, String direction){
 		s.setProperty("sortDirection", direction);
+		this.setHistoryParameter(s, "sortDirection", direction);
 		search(s);
 	}
 	
-	public void createCounterFilter(Screen s){		
+	private Filter createCounterFilter(HashMap<String, HashMap<String, FilterCondition>> categorisedConditions){
+		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
+		
+		for(Iterator<String> categoryIter = categorisedConditions.keySet().iterator(); categoryIter.hasNext();){
+			HashMap<String, FilterCondition> category = categorisedConditions.get(categoryIter.next());
+			for(Iterator<FilterCondition> conditionIter = category.values().iterator(); conditionIter.hasNext();){
+				conditions.add(conditionIter.next());
+			}
+		}
+		
+		return new Filter(conditions);
+	}
+	
+	private HashMap<String, HashMap<String, FilterCondition>> createCategoryCountsConditions(){
 		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, FilterCondition>>();
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		
@@ -428,7 +524,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			conditions.add(condition);
 		}
 		
-		Filter counterFilter = new Filter(conditions);
+		return categorisedConditionsToCount;
+	};
+	
+	public void createCounterFilter(Screen s){		
+		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = createCategoryCountsConditions();
+		Filter counterFilter = createCounterFilter(categorisedConditionsToCount);
 		
 		s.setProperty("counterConditions", categorisedConditionsToCount);
 		s.setProperty("counterFilter", counterFilter);
@@ -444,6 +545,48 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		}
 	}
 	
+	private JSONObject getCounterObject(boolean refresh){
+		List<FsNode> nodes = this.allNodes.getNodes();
+		return getCounterObject(refresh, nodes, "all", this.cachedCategorisedConditions, this.cachedCounterFilter);
+	}
+	
+	private JSONObject getCounterObject(boolean refresh, Screen s){
+		List<FsNode> nodes = (List<FsNode>) s.getProperty("rawNodes");
+		String type = (String) s.getProperty("activeType");
+		HashMap<String, HashMap<String, FilterCondition>> categorisedConditions = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
+		Filter counterFilter = (Filter) s.getProperty("counterFilter");
+		return getCounterObject(refresh, nodes, type, categorisedConditions, counterFilter);
+	}
+	
+	private JSONObject getCounterObject(boolean refresh, List<FsNode> nodes, String type, HashMap<String, HashMap<String, FilterCondition>> categorisedConditions, Filter counterFilter){
+		if(!type.equals("all")){
+			Filter typeFilter = new Filter();
+			typeFilter.addCondition(new TypeCondition(type));
+			
+			nodes = typeFilter.apply(nodes);
+		}
+		
+		if(refresh){
+			counterFilter.run(nodes);
+		}
+		
+		JSONObject countedResults = new JSONObject();
+		for(Iterator<String> catIterator = categorisedConditions.keySet().iterator(); catIterator.hasNext();){
+			String catName = catIterator.next();
+			HashMap<String, FilterCondition> catEntry = categorisedConditions.get(catName);
+			JSONObject categoryResults = new JSONObject();
+			countedResults.put(catName, categoryResults);
+			for(Iterator<String> fieldIterator = catEntry.keySet().iterator(); fieldIterator.hasNext();){
+				String fieldName = fieldIterator.next();
+				FilterCondition fieldCondition = catEntry.get(fieldName);
+				categoryResults.put(fieldName, fieldCondition.getPassed().size());
+			}
+		}
+		
+		return countedResults;
+	}
+	
+	/*
 	private JSONObject getCounterClient(Screen s){
 		List<FsNode> nodesToFilter = (List<FsNode>) s.getProperty("rawNodes");
 		String type = (String) s.getProperty("activeType");
@@ -480,6 +623,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		return countedResults;
 	}
+	*/
 	
 	private JSONObject createConditionFieldsForClient(Screen s){
 		JSONObject fields = new JSONObject();
@@ -564,41 +708,63 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		s.setProperty("filter", new Filter());
 	}
 	
+	public void setClientSelectedField(Screen s, String data){
+		this.setClientSelectedField(s, data, true);
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
+		this.setHistoryParameter(s, "activeFields", activeFields.toJSONString());
+	}
+	
 	/**
 	 * Sets a filter on this screen based on the selection by the user.
 	 * 
 	 * @param s The screen for which the filter was selected
 	 * @param data The data containing the userselection. 
 	 */
-	public void setClientSelectedField(Screen s, String data){
+	public void setClientSelectedField(Screen s, String data, boolean refresh){
+		System.out.println("EuscreenxlsearchApplication().setClientSelectedField(" + data + ")");
+		
+		s.putMsg("activefields", "", "loading(true)");
+		
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		if(activeFields == null){
 			activeFields = new JSONObject();
 			s.setProperty("clientSelectedFields", activeFields);
 		}
-
+	
 		JSONObject message = (JSONObject) JSONValue.parse(data);
-		String category = (String) message.keySet().iterator().next();
-		String value = (String) message.values().iterator().next();
-		JSONArray fieldsForCategory = (JSONArray) activeFields.get(category);
-		
-		if(fieldsForCategory == null){
-			fieldsForCategory = new JSONArray();
-			activeFields.put(category, fieldsForCategory);
+		for(Iterator<String> catIter = message.keySet().iterator(); catIter.hasNext();){
+			String category = catIter.next();
+			String value;
+			try{
+				value = (String) message.get(category);
+			}catch(ClassCastException cce){
+				JSONArray tmp = (JSONArray) message.get(category);
+				value = (String) tmp.get(0);
+			}
+			
+			JSONArray fieldsForCategory = (JSONArray) activeFields.get(category);
+			
+			if(fieldsForCategory == null){
+				fieldsForCategory = new JSONArray();
+				activeFields.put(category, fieldsForCategory);
+			}
+			
+			fieldsForCategory.add(value);
+			
+			JSONObject deactivateMessage = new JSONObject();
+			deactivateMessage.put("category", category);
+			s.putMsg("filter", "", "deactivateCategory(" + deactivateMessage + ")");
 		}
 		
-		fieldsForCategory.add(value);
-				
 		s.putMsg("activefields", "", "setActiveFields(" + activeFields + ")");
-		
-		JSONObject deactivateMessage = new JSONObject();
-		deactivateMessage.put("category", category);
-		s.putMsg("filter", "", "deactivateCategory(" + deactivateMessage + ")");
 		
 		createFilterFromClientSelectionForScreen(s);
 		
 		//Execute the search again in order update the results based on the new filter. 
-		this.search(s);
+		if(refresh)
+			this.search(s);
+		
+		s.putMsg("activefields", "", "loading(false)");
 	}
 	
 	/**
@@ -608,6 +774,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * @param data The data containing information as to what filter was removed. 
 	 */
 	public void removeClientSelectedField(Screen s, String data){
+		s.putMsg("activefields", "", "loading(true)");
+		
 		JSONObject message = (JSONObject) JSONValue.parse(data);
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		
@@ -625,6 +793,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		s.putMsg("filter", "", "activateCategory(" + activateMessage + ")");
 		createFilterFromClientSelectionForScreen(s);
 		this.search(s);
+		
+		s.putMsg("activefields", "", "loading(false)");
 	}
 	
 	/**

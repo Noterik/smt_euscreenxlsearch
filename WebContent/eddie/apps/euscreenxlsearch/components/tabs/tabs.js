@@ -6,8 +6,13 @@ var Tabs = function(options){
 		jQuery('a[data-toggle="tab"]').on('shown.bs.tab', function(event, element){
 			eddie.putLou('', 'setActiveType(' + jQuery(event.target).data('type') + ')');
 		})
-	}, 50);	
-}
+	}, 50);
+	
+	this.element.find('a').on('click', function(event){
+		event.preventDefault();
+		event.stopPropagation();
+	});
+};
 
 Tabs.prototype = Object.create(Component.prototype);
 Tabs.prototype.loadTab = function(type){
