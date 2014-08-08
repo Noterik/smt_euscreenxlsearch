@@ -5,19 +5,18 @@ var Searchinput = function(options){
 	this.element = jQuery("#searchinput");
 	this.searchQueryInput = this.element.find('#searchkeyword');
 	
-	this.searchQueryInput.keyup(function(event){
-		if(event.keyCode === 13){
-			self.search();
-		}
+	this.element.find('form').on('submit', function(event){
+		event.preventDefault();
+		self.search();
+		self.element.find('input').blur();
 	})
-	console.log(this);
 };
 Searchinput.prototype = Object.create(Component.prototype);
 Searchinput.prototype.events = {
-	"onkeyup #searchinput #searchkeyword": function(event){
-		if (e.keyCode === 13) {
-			this.search();
-		}
+	"submit #searchinput form": function(event){
+		event.preventDefault();
+		this.search();
+		this.element.find('input').blur();
 	}
 };
 Searchinput.prototype.setQuery = function(query){

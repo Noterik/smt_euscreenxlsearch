@@ -1,13 +1,19 @@
 <script class="result-template" type="text/template">
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
-	  	<a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>">
+	  	<a href="/item.html?id=<%= item.id %>">
 		    <div class="media-wrapper">
 		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
 	      	  <% if(item.type == "video"){ %>
 			  <span class="media-length"><%= item.duration %></span>
 	      	  <% } %>
-	      	  <span class="media-hue"><i class="glyphicon glyphicon-play"></i></span>
+	      	  <span class="media-hue">
+	      	  	<% if(item.type == "video" || item.type == "audio"){ %>
+	      	  		<i class="glyphicon glyphicon-play"></i>
+	      	  	<% }else{ %>
+	      	  		<i class="glyphicon glyphicon-search"></i>
+	      	  	<% } %>
+	      	  </span>
 	      	  <i class="media-type <%= item.type %>"></i>
 		    </div>
 		 </a>
@@ -106,9 +112,6 @@
 		<div class="row">
 			<div class="list results">
 			</div>
-			<div class="more col-md-12">
-            	<a href="#" data-page="audio" class="show-more hidden">SHOW MORE</a>
-	  		</div>	
 	  	</div>
 	  </div>
 	  <div class="tab-pane" id="results-documents">

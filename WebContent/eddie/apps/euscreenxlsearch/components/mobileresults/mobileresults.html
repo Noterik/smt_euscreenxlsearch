@@ -1,5 +1,5 @@
 <script class="result-template" type="text/template">
-	<a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>">
+	<a href="/item.html?id=<%= item.id %>">
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
 	    <div class="media-wrapper">
@@ -7,7 +7,13 @@
       	  <% if(item.type == "video"){ %>
 		  <span class="media-length"><%= item.duration %></span>
       	  <% } %>
-      	  <span class="media-hue"><i class="glyphicon glyphicon-play"></i></span>
+      	  <span class="media-hue">
+      	  	<% if(item.type == "video" || item.type == "audio"){ %>
+      	  		<i class="glyphicon glyphicon-play"></i>
+      	  	<% }else{ %>
+      	  		<i class="glyphicon glyphicon-search"></i>
+      	  	<% } %>
+      	  </span>
       	  <i class="media-type <%= item.type %>"></i>
 	    </div>
 	  </div>
@@ -15,14 +21,6 @@
 	    <h3 class="media-heading">
 	      <%= item.title %>
 	    </h3>
-	    <span class="line">
-		    <span class="label">
-		      Original Title:
-		    </span>
-		    <span class="value">
-		     <%= item.originalTitle %>
-		    </span>
-		</span>
 		<span class="line">
 		    <span class="label">
 		      Provider:
@@ -33,7 +31,7 @@
 		</span>
 	    <span class="line">
 		    <span class="label">
-		      Production year:
+		     Year:
 		    </span>
 		    <span class="value">
 		      <%= item.year %>
@@ -51,13 +49,21 @@
 	</div>
 	</a>
 </script>
-<script class="loading-template" type="text/template">
-	<div class="loading">
-		Please wait, loading results...
-	</div>
-</script>
 
 <div class="col-md-12 results">
+	<!-- spinner -->
+	<div class="spinner hidden">
+		<img src="/eddie/apps/euscreenxlelements/img/spinner.gif" />
+	</div>
+	
+	<!-- no results -->
+	<div class="no-results" id="no-search-term">
+		START BY ENTERING SEARCH TERMS
+	</div>
+	<div class="no-results hidden" id="no-results">
+		NO RESULTS FOUND, PLEASE TRY AGAIN WITH DIFFERENT KEYWORDS
+	</div>
+	
   	<div class="row">
   		<div class="col-md-12">
 		  	<div class="list">
@@ -65,11 +71,4 @@
 		  	</div>
 		</div>
 	</div>
-</div>
-
-<!-- /results -->
-<div class="row">
-    <div class="more col-md-12">
-    	<a href="#">SHOW MORE</a>
-    </div>
 </div>

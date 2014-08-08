@@ -1,15 +1,7 @@
-.search .main .right .row .more {
-  padding: 23px 0 0 0;
+.search.desktop .main .right .row .more{
+	padding-bottom: 0px;
 }
 
-ul.nav-tabs li a.inactive{
-	color: white!important;
-	background-color: #DFDFDF;
-	cursor: not-allowed;
-}
-
-ul.nav-tabs li a.inactive:hover{
-	color: white!important;
-	background-color: #DFDFDF!important;
-	cursor: not-allowed!important;
+#searchinput form, #mobilesearchinput form{
+	height: 100%;
 }

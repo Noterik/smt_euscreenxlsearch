@@ -33,6 +33,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springfield.fs.FSList;
 import org.springfield.fs.FSListManager;
+import org.springfield.fs.Fs;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.application.Html5Application;
 import org.springfield.lou.application.types.conditions.AndCondition;
@@ -41,6 +42,7 @@ import org.springfield.lou.application.types.conditions.FilterCondition;
 import org.springfield.lou.application.types.conditions.OrCondition;
 import org.springfield.lou.application.types.conditions.TimeRangeCondition;
 import org.springfield.lou.application.types.conditions.TypeCondition;
+import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.screen.Screen;
 
 
@@ -50,6 +52,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * Cached copy of all the nodes. Not sure if this is really neccesary. 
 	 */
 	private FSList allNodes;
+	private HashMap<String, String> countriesForProviders;
 	
 	/*
 	 * Arraylist containing all the categories of fields. This will be used to categorize the conditions, and to fill 
@@ -67,6 +70,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 */
 	public EuscreenxlsearchApplication(String id) {
 		super(id); 
+		
+		this.countriesForProviders = new HashMap<String, String>();
 		
 		// allways 'loads' the full result set with all the items from the manager
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
@@ -88,8 +93,17 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		this.cachedCategorisedConditions = this.createCategoryCountsConditions();
 		this.cachedCounterFilter = this.createCounterFilter(this.cachedCategorisedConditions);
-		System.out.println(allNodes.getNodes().size());
-		this.cachedCounterFilter.run(allNodes.getNodes());
+		
+		List<FsNode> nodes = allNodes.getNodes();
+		
+		if(!this.inDevelMode()){
+			Filter filter = new Filter();
+			EqualsCondition condition = new EqualsCondition("public", "true");
+			filter.addCondition(condition);
+			nodes = filter.apply(nodes);
+		}
+		
+		this.cachedCounterFilter.run(nodes);
 				
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
@@ -98,7 +112,18 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		this.addReferid("mobilenav", "/euscreenxlelements/mobilenav");
 		this.addReferid("header", "/euscreenxlelements/header");
 		this.addReferid("footer", "/euscreenxlelements/footer");
+		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
 	}
+	
+	public void init(Screen s){
+		if(!this.inDevelMode()){
+			s.putMsg("linkinterceptor", "", "interceptLinks()");
+		}
+	}
+	
+	private boolean inDevelMode() {
+    	return LazyHomer.inDeveloperMode();
+    }
 	
 	public void setInitialCounts(Screen s){
 		s.putMsg("filter", "", "setCounts(" + this.getCounterObject(false) + ")");
@@ -139,7 +164,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		if(s.getParameter("activeType") != null){
 			String activeType = (String) s.getParameter("activeType");
 			s.setProperty("activeType", activeType);
-			s.putMsg("tabs", "", "loadTab(" + activeType + ")");
+			if(s.getProperty("mobile") == null)
+				s.putMsg("tabs", "", "loadTab(" + activeType + ")");
 			startupParameters.put("activeType", activeType);
 		}
 		
@@ -163,6 +189,11 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	
 	public void setSearchQuery(Screen s, String data){
 		this.setSearchQuery(s, data, true);
+	}
+	
+	public void clearFields(Screen s){
+		s.setProperty("clientSelectedFields", new JSONObject());
+		this.search(s);
 	}
 		
 	/**
@@ -195,9 +226,17 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	 * @param s The screen for which to execute the search
 	 */
 	public void search(Screen s){
+		System.out.println("EuscreenxlsearchApplication.search()");
+		String resultsElement;
+		
+		if(s.getProperty("mobile") == null){
+			resultsElement = "results";
+		}else{
+			resultsElement = "mobileresults";
+		}
 		
 		this.clearResults(s);
-		s.putMsg("results", "", "loading(true)");
+		s.putMsg(resultsElement, "", "loading(true)");
 		
 		// lets get the nodes from the fslist, depending on input we get them all or
 		// filtered and sorted
@@ -236,7 +275,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		nodes = filter.apply(nodes);
 						
 		s.setProperty("rawNodes", nodes);
-		
+				
 		JSONObject results = createResultSet(nodes);
 		s.setProperty("results", results);
 		
@@ -257,7 +296,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		this.createTypeChunking(s);
 		this.sendChunkToClient(s);
-		s.putMsg("results", "", "loading(false)");
+		s.putMsg(resultsElement, "", "loading(false)");
 	}
 	
 	private void setHistoryParameter(Screen s, String key, String value){
@@ -333,12 +372,26 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			for(Iterator<FsNode> nodeIterator = typeCondition.getPassed().iterator(); nodeIterator.hasNext();){
 				FsNode node = nodeIterator.next();
 				
+				String path = node.getPath();
+				String[] splits = path.split("/");
+				String provider = splits[4];
+				
+				if(!this.countriesForProviders.containsKey(provider)){
+					FsNode providerNode = Fs.getNode("/domain/euscreenxl/user/" + provider + "/account/default");
+					try{
+						String fullProviderString = providerNode.getProperty("birthdata");
+						this.countriesForProviders.put(provider, fullProviderString);
+					}catch(NullPointerException npe){
+						this.countriesForProviders.put(provider, node.getProperty(FieldMappings.getSystemFieldName("provider")));
+					}
+				}
+				
 				JSONObject result = new JSONObject();
 				result.put("type", node.getName());
 				result.put("screenshot", this.setEdnaMapping(node.getProperty(FieldMappings.getSystemFieldName("screenshot"))));
 				result.put("title", node.getProperty(FieldMappings.getSystemFieldName("title")));
 				result.put("originalTitle", node.getProperty(FieldMappings.getSystemFieldName("originalTitle")));
-				result.put("provider", node.getProperty(FieldMappings.getSystemFieldName("provider")));
+				result.put("provider", this.countriesForProviders.get(provider));
 				result.put("year", node.getProperty(FieldMappings.getSystemFieldName("year")));
 				result.put("language", node.getProperty(FieldMappings.getSystemFieldName("language")));
 				result.put("duration", node.getProperty(FieldMappings.getSystemFieldName("duration")));
@@ -377,6 +430,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		types.add(new TypeCondition("audio"));
 		
 		Filter filter = new Filter(types);
+		
 		return filter;
 	};
 	
@@ -394,7 +448,14 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void setActiveType(Screen s, String type){
-		s.putMsg("results", "", "loading(true)");
+		String resultsElement;
+		
+		if(s.getProperty("mobile") == null){
+			resultsElement = "results";
+		}else{
+			resultsElement = "mobileresults";
+		}
+		s.putMsg(resultsElement, "", "loading(true)");
 		this.clearResults(s);
 		s.setProperty("activeType", type);	
 		this.setHistoryParameter(s, "activeType", type);
@@ -402,7 +463,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		this.setResultAmountOnClient(s);
 		s.putMsg("filter", "", "setCounts(" + this.getCounterObject(true, s) + ")");
 		sendChunkToClient(s);
-		s.putMsg("results", "", "loading(false)");
+		s.putMsg(resultsElement, "", "loading(false)");
 	};
 	
 	public void getNextChunk(Screen s){
@@ -490,7 +551,16 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		HashMap<String, HashMap<String, FilterCondition>> categorisedConditionsToCount = new HashMap<String, HashMap<String, FilterCondition>>();
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		
-		for(Iterator<FsNode> iter = allNodes.getNodes().iterator() ; iter.hasNext(); ) {
+		List<FsNode> nodes = allNodes.getNodes();
+		
+		if(!this.inDevelMode()){
+			Filter filter = new Filter();
+			EqualsCondition condition = new EqualsCondition("public", "true");
+			filter.addCondition(condition);
+			nodes = filter.apply(nodes);
+		}
+		
+		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
 			// get the next node
 			FsNode n = (FsNode)iter.next();	
 			
@@ -559,6 +629,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private JSONObject getCounterObject(boolean refresh, List<FsNode> nodes, String type, HashMap<String, HashMap<String, FilterCondition>> categorisedConditions, Filter counterFilter){
+		if(!this.inDevelMode()){
+			Filter filter = new Filter();
+			filter.addCondition(new EqualsCondition("public", "true"));
+			nodes = filter.apply(nodes);
+		}
+		
 		if(!type.equals("all")){
 			Filter typeFilter = new Filter();
 			typeFilter.addCondition(new TypeCondition(type));
@@ -705,7 +781,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void createFilter(Screen s){
-		s.setProperty("filter", new Filter());
+		System.out.println("createFilter()");
+		Filter filter = new Filter();
+		if(!this.inDevelMode()){
+			filter.addCondition(new EqualsCondition("public", "true"));
+		}
+		s.setProperty("filter", filter);
 	}
 	
 	public void setClientSelectedField(Screen s, String data){
@@ -794,6 +875,8 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		createFilterFromClientSelectionForScreen(s);
 		this.search(s);
 		
+		this.setHistoryParameter(s, "activeFields", activeFields.toJSONString());
+		
 		s.putMsg("activefields", "", "loading(false)");
 	}
 	
@@ -826,9 +909,16 @@ public class EuscreenxlsearchApplication extends Html5Application{
 			}
 		}
 		
+		if(!this.inDevelMode()){
+			andCondition.add(new EqualsCondition("public", "true"));
+		}
+		
 		conditions.add(andCondition);
 		
-		s.setProperty("filter", new Filter(conditions));
+		Filter filter = new Filter(conditions);
+		
+		
+		s.setProperty("filter", filter);
 	}
 	
 	private ArrayList<FilterCondition> createEqualsConditionsForField(String field, ArrayList<String> allowedValues){

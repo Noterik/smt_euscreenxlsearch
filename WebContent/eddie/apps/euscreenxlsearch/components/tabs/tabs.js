@@ -27,11 +27,11 @@ Tabs.prototype.setActiveTabs = function(data){
 		var tab = this.element.find('a[data-type="' + type + '"]')
 		
 		if(active){
-			tab.removeClass('inactive');
+			tab.parent().removeClass('inactive');
 			tab.attr('data-toggle', 'tab');
 			tab.off('click');
 		}else{
-			tab.addClass('inactive');
+			tab.parent().addClass('inactive');
 			tab.attr('data-toggle', '');
 			tab.on('click', function(event){
 				event.preventDefault();

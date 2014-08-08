@@ -65,18 +65,25 @@ Filter.prototype.setCounts = function(data){
 	var self = this;
 	
 	var fields = JSON.parse(data);
-	
-	console.log(fields);
-	
+		
 	for(var category in fields){
+		var args = {category: category};
 		var counts = fields[category];
 		self.fieldElements[category].find('li').hide();
-		for(var value in counts){
-			self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span.badge').remove();
-			if(!counts[value] == 0){
-				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().append(_.template(self.counterTemplate, {counter: {amount: counts[value]}}));
-				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().show();
+		var availableFields = _.filter(counts, function(value){
+			return value > 0
+		});
+		if(availableFields.length > 1){
+			this.activateCategory(JSON.stringify(args));
+			for(var value in counts){
+				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span.badge').remove();
+				if(!counts[value] == 0){
+					self.fieldElements[category].find('a[data-value="' + value + '"]').parent().append(_.template(self.counterTemplate, {counter: {amount: counts[value]}}));
+					self.fieldElements[category].find('a[data-value="' + value + '"]').parent().show();
+				}
 			}
+		}else{
+			this.deactivateCategory(JSON.stringify(args));
 		}
 	}
 };
@@ -99,12 +106,12 @@ Filter.prototype.deactivateCategory = function(data){
 	var message = JSON.parse(data);
 	
 	var category = message.category;
-	var a = this.fieldElements[category].parent().parent().find('> a');
+	var filterElement = this.fieldElements[category].parent().parent();
+	var a = filterElement.find('> a');
 	
 	this.fieldElements[category].parent().removeClass('in').addClass('out');
 	
-	
-	a.addClass('inactive');
+	filterElement.addClass('inactive');
 	a.on('click', function(){
 		event.stopPropagation();
 	});
@@ -117,9 +124,10 @@ Filter.prototype.activateCategory = function(data){
 	var message = JSON.parse(data);
 	
 	var category = message.category;
-	var a = this.fieldElements[category].parent().parent().find('> a');
+	var filterElement = this.fieldElements[category].parent().parent();
+	var a = filterElement.find('> a');
 	
-	a.removeClass('inactive');
+	filterElement.removeClass('inactive');
 	a.off('click');
 	
 	a.find('i').show();

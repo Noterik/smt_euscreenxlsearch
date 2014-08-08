@@ -8,26 +8,22 @@ var Mobilesearchinput = function(options){
 	this.searchParametersElement = jQuery('#search-parameters');
 	this.toggleButton = jQuery("#mobilesearchinput #optionbutton");
 	
-	this.searchQueryInput.keyup(function(event){
-		if(event.keyCode === 13){
-			self.search();
-		}
+	this.element.find('form').submit(function(event){
+		event.preventDefault();
+		self.search();
+		self.element.find('input').blur();
 	});
 		
 };
 Mobilesearchinput.prototype = Object.create(Component.prototype);
 Mobilesearchinput.prototype.events = {
-	"onkeyup #mobilesearchinput #searchkeyword": function(event){
-		if (e.keyCode === 13) {
-			this.search();
-		}
-	},
-	"focusout #mobilesearchinput #searchkeyword": function(event){
+	"submit #mobilesearchinput form": function(event){
+		event.preventDefault();
 		this.search();
+		this.element.find('input').blur();
 	},
 	"click #mobilesearchinput #optionbutton": function(event){
 		var button = jQuery(event.target);
-		console.log(button[0]);
 		if(this.searchParametersElement.hasClass('optionOpened')){
 			this.searchParametersElement.removeClass('optionOpened');
 			this.toggleButton.removeClass('active');

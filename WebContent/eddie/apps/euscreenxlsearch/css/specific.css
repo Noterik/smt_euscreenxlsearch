@@ -1,9 +1,13 @@
+@import url(http://fonts.googleapis.com/css?family=Titillium+Web:400,400italic,600,600italic);
 /**
 * all.less
 *
 * This file contains the search results styles which are to be applied on all devices specifically for search results page.
 * Certain device may override these styles in their own stylesheet.
 */
+.search .main.search-results {
+  padding-top: 70px;
+}
 .search .main .left .row [class*='col-'] {
   padding-left: 0px;
   padding-right: 0px;
@@ -102,8 +106,26 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   display: none;
   padding-top: 0px;
 }
+.search .main .left .row .selectedfilter .header {
+  display: table !important;
+  float: left;
+}
+.search .main .left .row .selectedfilter .clear {
+  float: right;
+  display: block;
+  margin: 21px 25px 0 0;
+}
+.search .main .left .row .selectedfilter .clear a {
+  color: #ec008c;
+  font-size: 0.7em;
+  letter-spacing: 1px;
+  border: 1px solid #ec008c;
+  border-radius: 2px;
+  padding: 2px 3px 1px 3px;
+}
 .search .main .left .row .selectedfilter .tags {
   padding: 0 25px 25px 25px;
+  clear: both;
 }
 .search .main .left .row .selectedfilter .tags .tag {
   display: inline-block;
@@ -154,6 +176,15 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   border-right: 1px solid #f2f2f2;
   background: #ffffff;
   margin-top: -1px;
+}
+.search .main .left .row .filters .accordion .filter.inactive a,
+.search .main .left .row .mediaselector .accordion .filter.inactive a {
+  color: #cccccc;
+  cursor: not-allowed;
+}
+.search .main .left .row .filters .accordion .filter.inactive a .glyphicon,
+.search .main .left .row .mediaselector .accordion .filter.inactive a .glyphicon {
+  display: none;
 }
 .search .main .left .row .filters .accordion .filter .filtercontent,
 .search .main .left .row .mediaselector .accordion .filter .filtercontent {
@@ -278,6 +309,7 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   padding-right: 0px;
   background: #ffffff;
   border-bottom: 5px solid #00aeef;
+  border-top: 5px solid #f2f2f2;
   display: none;
   position: fixed;
   z-index: 20;
@@ -317,6 +349,15 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   border-radius: 0px;
   color: #ffffff;
   font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+}
+.search .main .right .row.results-media .mediatab .nav li.inactive a {
+  color: #cccccc;
+}
+.search .main .right .row.results-media .mediatab .nav li.inactive a:hover,
+.search .main .right .row.results-media .mediatab .nav li.inactive a:visited,
+.search .main .right .row.results-media .mediatab .nav li.inactive a:active {
+  background: #fff;
+  cursor: not-allowed;
 }
 .search .main .right .row.results-action .counter {
   background: #fff;
@@ -381,7 +422,6 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   text-align: center;
   font-size: 0.929em;
   letter-spacing: 1px;
-  font-weight: lighter;
   padding: 23px 0 0 0;
   color: #00aeef;
 }
