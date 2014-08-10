@@ -23,6 +23,7 @@ Activefields.prototype.loading = function(loading){
 };
 Activefields.prototype.clear = function(){
 	this.activeFieldsElement.html('');
+	this.element.addClass('hidden');
 	eddie.putLou('', 'clearFields()');
 };
 Activefields.prototype.setActiveFields = function(data){
@@ -44,7 +45,7 @@ Activefields.prototype.setActiveFields = function(data){
 	};
 	
 	if(templateObject.activeFields.length > 0){
-		console.log(this.element);
+		this.clearButton.removeClass('hidden');
 		this.element.removeClass('hidden');
 		this.activeFieldsElement.html(_.template(this.fieldTemplate, templateObject));
 		this.activeFieldsElement.find("ul.tag li.action a").off("click").click(function(event){
