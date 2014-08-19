@@ -12,19 +12,16 @@ var Searchinput = function(options){
 	})
 };
 Searchinput.prototype = Object.create(Component.prototype);
-Searchinput.prototype.events = {
-	"submit #searchinput form": function(event){
-		event.preventDefault();
-		this.search();
-		this.element.find('input').blur();
-	}
-};
+Searchinput.prototype.events = {};
 Searchinput.prototype.setQuery = function(query){
 	this.searchQueryInput.val(query);
 };
 Searchinput.prototype.search = function(){
-	var objectToSend = {
-    	query: this.searchQueryInput.val()
-    };
-    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
+	var query = this.searchQueryInput.val();
+	if(!(query == "" || query == " " || query == null)){
+		var objectToSend = {
+	    	query: query
+	    };
+	    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
+	}
 };

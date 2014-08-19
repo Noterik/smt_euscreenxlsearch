@@ -1,10 +1,10 @@
 <script class="result-template" type="text/template">
 	<a href="/item.html?id=<%= item.id %>">
 	<div class="row media-item" data-id="<%= item.id %>">
-	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
+	  <div class="media-image col-md-4 col-sm-5 col-xs-6">
 	    <div class="media-wrapper">
 	      <img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
-      	  <% if(item.type == "video"){ %>
+      	  <% if(item.type == "video" || itemtype == "audio"){ %>
 		  <span class="media-length"><%= item.duration %></span>
       	  <% } %>
       	  <span class="media-hue">
@@ -17,7 +17,7 @@
       	  <i class="media-type <%= item.type %>"></i>
 	    </div>
 	  </div>
-	  <div class="media-metadata col-md-8 col-sm-7 col-xs-7">
+	  <div class="media-metadata col-md-8 col-sm-7 col-xs-6">
 	    <h3 class="media-heading">
 	      <%= item.title %>
 	    </h3>
@@ -27,14 +27,6 @@
 		    </span>
 		    <span class="value">
 		      <%= item.provider %>
-		    </span>
-		</span>
-	    <span class="line">
-		    <span class="label">
-		     Year:
-		    </span>
-		    <span class="value">
-		      <%= item.year %>
 		    </span>
 		</span>
 		<span class="line">

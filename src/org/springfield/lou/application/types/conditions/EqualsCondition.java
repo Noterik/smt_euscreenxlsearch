@@ -6,7 +6,7 @@ public class EqualsCondition extends FilterCondition {
 	
 	private String field;
 	private String allowedValue;
-	private String fieldSeperator = ",";
+	private String fieldSeperator = null;
 	private boolean trim = true;
 	private boolean caseSensitive = false;
 	

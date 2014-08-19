@@ -113,9 +113,11 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		this.addReferid("header", "/euscreenxlelements/header");
 		this.addReferid("footer", "/euscreenxlelements/footer");
 		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
+		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
 	}
 	
 	public void init(Screen s){
+		System.out.println("init()");
 		if(!this.inDevelMode()){
 			s.putMsg("linkinterceptor", "", "interceptLinks()");
 		}
@@ -139,8 +141,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		if(s.getParameter("query") != null){
 			String query = (String) s.getParameter("query");
 			s.setProperty("searchQuery", query);
-			System.out.println("MOBILE:");
-			System.out.println(s.getProperty("mobile"));
 			if(s.getProperty("mobile") != null){
 				s.putMsg("mobilesearchinput", "", "setQuery(" + query + ")");
 			}else{
@@ -192,8 +192,12 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	public void clearFields(Screen s){
-		s.setProperty("clientSelectedFields", new JSONObject());
+		JSONObject emptyFields = new JSONObject();
+		s.setProperty("clientSelectedFields", emptyFields);
+		this.createFilterFromClientSelectionForScreen(s);
 		this.search(s);
+		s.putMsg("activefields", "", "setActiveFields(" + emptyFields + ")");
+		this.setHistoryParameter(s, "activeFields", emptyFields.toJSONString());
 	}
 		
 	/**
@@ -578,6 +582,10 @@ public class EuscreenxlsearchApplication extends Html5Application{
 						FilterCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value, ",");
 						catEntry.put(value, condition);
 						conditions.add(condition);
+					}else if(category.equals("topic")){
+						FilterCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value);
+						catEntry.put(value, condition);
+						conditions.add(condition);
 					}
 				}
 			}
@@ -662,45 +670,6 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		return countedResults;
 	}
 	
-	/*
-	private JSONObject getCounterClient(Screen s){
-		List<FsNode> nodesToFilter = (List<FsNode>) s.getProperty("rawNodes");
-		String type = (String) s.getProperty("activeType");
-		
-		List<FsNode> nodes;
-		
-		if(!type.equals("all")){
-			Filter typeFilter = new Filter();
-			typeFilter.addCondition(new TypeCondition(type));
-			
-			nodes = typeFilter.apply(nodesToFilter);
-		}else{
-			nodes = nodesToFilter;
-		}
-		
-		HashMap<String, HashMap<String, FilterCondition>> counters = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
-		Filter counterFilter = (Filter) s.getProperty("counterFilter");
-		
-		counterFilter.run(nodes);
-		
-		JSONObject countedResults = new JSONObject();
-		
-		for(Iterator<String> catIterator = counters.keySet().iterator(); catIterator.hasNext();){
-			String catName = catIterator.next();
-			HashMap<String, FilterCondition> catEntry = counters.get(catName);
-			JSONObject categoryResults = new JSONObject();
-			countedResults.put(catName, categoryResults);
-			for(Iterator<String> fieldIterator = catEntry.keySet().iterator(); fieldIterator.hasNext();){
-				String fieldName = fieldIterator.next();
-				FilterCondition fieldCondition = catEntry.get(fieldName);
-				categoryResults.put(fieldName, fieldCondition.getPassed().size());
-			}
-		}
-		
-		return countedResults;
-	}
-	*/
-	
 	private JSONObject createConditionFieldsForClient(Screen s){
 		JSONObject fields = new JSONObject();
 		
@@ -723,22 +692,31 @@ public class EuscreenxlsearchApplication extends Html5Application{
 		
 		JSONArray availableOptions = new JSONArray();
 		ArrayList<String> options = new ArrayList<String>();
-		
+				
 		for(Iterator<FsNode> iter = nodes.iterator() ; iter.hasNext(); ) {
 			// get the next node
 			FsNode n = (FsNode)iter.next();	
 			
 			String optionsStr = n.getProperty(category);
 			
-			if(optionsStr != null){		
-				String[] optionsArr = optionsStr.split(",");
+			if(optionsStr != null){	
 				
-				for(int i = 0; i < optionsArr.length; i++){
-					String option = optionsArr[i].trim();
-					if(!options.contains(option) && option != null){
-						options.add(option);
+				if(!category.equals("topic")){
+
+					String[] optionsArr = optionsStr.split(",");
+					
+					for(int i = 0; i < optionsArr.length; i++){
+						String option = optionsArr[i].trim();
+						if(!options.contains(option) && option != null){
+							options.add(option);
+						}
+					}
+				}else{
+					if(!options.contains(optionsStr)){
+						options.add(optionsStr);
 					}
 				}
+				
 			}
 		}
 		
@@ -892,17 +870,24 @@ public class EuscreenxlsearchApplication extends Html5Application{
 				
 		for(Iterator<String> iter = activeFields.keySet().iterator(); iter.hasNext();){
 			String key = iter.next();
-			if(!key.equals("decade")){
+			if(!key.equals("decade") && !key.equals("topic")){
 				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
 				ArrayList<FilterCondition> equalsConditions = new ArrayList<FilterCondition>();
 				equalsConditions = createEqualsConditionsForField(FieldMappings.getSystemFieldName(key), allowedValues);
 				
 				OrCondition orCondition = new OrCondition(equalsConditions);
 				andCondition.add(orCondition);
-			}else{
+			}else if(key.equals("decade")){
 				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
 				ArrayList<FilterCondition> decadeConditions = new ArrayList<FilterCondition>();
 				decadeConditions = createDecadeConditions(FieldMappings.getSystemFieldName("year"), allowedValues);
+				
+				OrCondition orCondition = new OrCondition(decadeConditions);
+				andCondition.add(orCondition);
+			}else if(key.equals("topic")){
+				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
+				ArrayList<FilterCondition> decadeConditions = new ArrayList<FilterCondition>();
+				decadeConditions = createTopicConditions(FieldMappings.getSystemFieldName("topic"), allowedValues);
 				
 				OrCondition orCondition = new OrCondition(decadeConditions);
 				andCondition.add(orCondition);
@@ -922,6 +907,7 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private ArrayList<FilterCondition> createEqualsConditionsForField(String field, ArrayList<String> allowedValues){
+		System.out.println("createEqualsConditionsForField()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			conditions.add(new EqualsCondition(field, i.next(), ","));
@@ -930,12 +916,23 @@ public class EuscreenxlsearchApplication extends Html5Application{
 	}
 	
 	private ArrayList<FilterCondition> createDecadeConditions(String field, ArrayList<String> allowedValues){
+		System.out.println("createDecadeConditions()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			String startStr = i.next();
 			int startYear = Integer.parseInt(startStr);
 			int stopYear = startYear + 10;
 			conditions.add(new TimeRangeCondition(startYear, stopYear, field));
+		}
+		return conditions;
+	}
+	
+	private ArrayList<FilterCondition> createTopicConditions(String field, ArrayList<String> allowedValues){
+		System.out.println("createTopicConditions()");
+		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
+		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
+			String value = i.next();
+			conditions.add(new EqualsCondition(field, value));
 		}
 		return conditions;
 	}

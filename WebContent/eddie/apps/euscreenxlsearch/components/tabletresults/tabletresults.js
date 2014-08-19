@@ -1,5 +1,5 @@
-var Results = function(options){	
-	console.log("Results()");
+var Tabletresults = function(options){	
+	console.log("Tabletresults()");
 	Component.apply(this, arguments);
 	var self = this;
 	
@@ -31,27 +31,27 @@ var Results = function(options){
 	this.noResultsElement = this.element.find('#no-results');
 };
 
-Results.prototype = Object.create(Component.prototype);
-Results.prototype.events = {
+Tabletresults.prototype = Object.create(Component.prototype);
+Tabletresults.prototype.events = {
 	"click #results .more a": function(event, element){
 		event.preventDefault();
 		eddie.putLou('', 'getNextChunk()');
 	}
 };
-Results.prototype.loading = function(loading){
+Tabletresults.prototype.loading = function(loading){
 	if(loading == "true"){
 		this.spinner.removeClass('hidden');
 	}else{
 		this.spinner.addClass('hidden');
 	}
 };
-Results.prototype.clear = function(){
+Tabletresults.prototype.clear = function(){
 	for(page in this.pages){
 		this.pages[page].element.find('.list').html('');
 	}
 };
-Results.prototype.setResults = function(results){	
-	console.log("Results.prototype.setResults()");
+Tabletresults.prototype.setResults = function(results){	
+	console.log("Tabletresults.prototype.setResults()");
 	this.tabContentElement.removeClass('hidden');
 	this.noSearchElement.addClass('hidden');
 	this.spinner.addClass('hidden');
@@ -76,9 +76,9 @@ Results.prototype.setResults = function(results){
 	
 	eddie.putLou('template', 'positionSidebar()');
 };
-Results.prototype.hideLoadMore = function(){
+Tabletresults.prototype.hideLoadMore = function(){
 	this.element.find('a.show-more').addClass('hidden');
 };
-Results.prototype.showLoadMore = function(){
+Tabletresults.prototype.showLoadMore = function(){
 	this.element.find('a.show-more').removeClass('hidden');
 };

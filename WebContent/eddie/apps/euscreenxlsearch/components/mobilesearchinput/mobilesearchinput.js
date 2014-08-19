@@ -9,6 +9,7 @@ var Mobilesearchinput = function(options){
 	this.toggleButton = jQuery("#mobilesearchinput #optionbutton");
 	
 	this.element.find('form').submit(function(event){
+		console.log("SUBMIT!!!");
 		event.preventDefault();
 		self.search();
 		self.element.find('input').blur();
@@ -36,12 +37,13 @@ Mobilesearchinput.prototype.events = {
 };
 Mobilesearchinput.prototype.search = function(){
 	if(this.searchQueryInput.val().length > 0){
-		console.log("Mobilesearchinput.search()");
-		console.log(this.searchQueryInput.val());
-		var objectToSend = {
-	    	query: this.searchQueryInput.val()
-	    };
-	    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
+		var query = this.searchQueryInput.val();
+		if(!(query == "" || query == " " || query == null)){
+			var objectToSend = {
+		    	query: query
+		    };
+		    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
+		}
 	}
 };
 Mobilesearchinput.prototype.setQuery = function(query){

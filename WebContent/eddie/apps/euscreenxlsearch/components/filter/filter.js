@@ -100,6 +100,10 @@ Filter.prototype.fieldClicked = function(event){
 		
 		eddie.putLou("", "setfield(" + JSON.stringify(objectToSend) + ")");
 	}
+	
+	setTimeout(function(){
+		eddie.putLou("template", "positionSidebar()");
+	}, 500);
 };
 Filter.prototype.deactivateCategory = function(data){
 	console.log("deactivateCategory()");

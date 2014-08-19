@@ -1,4 +1,5 @@
 var Mobiletemplate = function(){
+	Component.apply(this);
 	console.log("Mobiletemplate()");
 };
 
