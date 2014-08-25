@@ -121,8 +121,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void init(Screen s){
-		System.out.println("init()");
-		System.out.println(s.getCapabilities().getDeviceModeName());
 		if(!this.inDevelMode()){
 			s.putMsg("linkinterceptor", "", "interceptLinks()");
 		}
@@ -159,7 +157,9 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	
 	public void parseURLParams(Screen s){
 		JSONObject startupParameters = new JSONObject();
+		boolean search = false;
 		if(s.getParameter("query") != null){
+			search = true;
 			String query = (String) s.getParameter("query");
 			s.setProperty("searchQuery", query);
 			if(s.getProperty("mobile") != null){
@@ -191,6 +191,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		}
 		
 		if(s.getParameter("activeFields") != null){
+			search = true;
 			try {
 				String encodedString = (String) s.getParameter("activeFields");
 				startupParameters.put("activeFields", encodedString);
@@ -203,9 +204,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		}
 		
 		s.putMsg("history", "", "setStartupParameters(" + startupParameters + ")");
-		if(s.getProperty("searchQuery") != null){
+		if(search)
 			this.search(s);
-		}
 	};
 	
 	public void setSearchQuery(Screen s, String data){
