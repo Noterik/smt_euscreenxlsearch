@@ -3,7 +3,8 @@ var Tabletresults = function(options){
 	Component.apply(this, arguments);
 	var self = this;
 	
-	this.element = jQuery("#results");
+	this.element = jQuery("#tabletresults");
+	this.scrollBlock = false;
 	
 	this.pages = {
 		"all": {
@@ -29,6 +30,16 @@ var Tabletresults = function(options){
 	this.spinner = this.element.find('.spinner');
 	this.noSearchElement = this.element.find('#no-search-term');
 	this.noResultsElement = this.element.find('#no-results');
+
+	jQuery(window).on('scroll', function(){
+		if(!self.scrollBlock){
+			var difference = jQuery(window).height() - jQuery(window).scrollTop();
+			if(difference < 0){
+				self.scrollBlock = true;
+				eddie.putLou('', 'getNextChunk()');
+			}
+		}
+	});
 };
 
 Tabletresults.prototype = Object.create(Component.prototype);
@@ -73,7 +84,7 @@ Tabletresults.prototype.setResults = function(results){
 		}
 		
 	}
-	
+	this.scrollBlock = false;
 	eddie.putLou('template', 'positionSidebar()');
 };
 Tabletresults.prototype.hideLoadMore = function(){

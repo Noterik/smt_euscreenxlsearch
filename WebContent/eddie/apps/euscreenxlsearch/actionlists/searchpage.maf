@@ -14,10 +14,12 @@ loadContent(screen,tabs)
 loadContent(screen,searchinput)
 
 .when device=ipad
+callServer(setTablet,screen)
 loadContent(screen,template)
 loadContent(screen,tabletresults)
 loadContent(screen,tabs)
 loadContent(screen,searchinput)
+removeContent(screen,footer)
 
 .when device=iphone
 callServer(setMobile,screen)
@@ -26,6 +28,22 @@ loadContent(screen,mediaselector)
 loadContent(screen,mobileresults)
 loadContent(screen,mobilesearchinput)
 loadContent(screen,headerhider)
+
+.when device=aphone
+callServer(setMobile,screen)
+loadContent(screen,mobiletemplate)
+loadContent(screen,mediaselector)
+loadContent(screen,mobileresults)
+loadContent(screen,mobilesearchinput)
+loadContent(screen,headerhider)
+
+.when device=atablet
+callServer(setTablet,screen)
+loadContent(screen,template)
+loadContent(screen,tabletresults)
+loadContent(screen,tabs)
+loadContent(screen,searchinput)
+removeContent(screen,footer)
 
 loadContent(screen,header)
 loadContent(screen,mobilenav)

@@ -14,7 +14,7 @@ Resultsorter.prototype.events = {
 			field: field,
 			direction: "up"
 		};
-		this.element.find('.dropdown span.field').text(field.toUpperCase())
+		this.element.find('.dropdown span.field').text(jQuery(event.srcElement).text());
 		eddie.putLou("", "setsorting(" + JSON.stringify(object) + ")");
 	},
 	"click #resultsorter .sort-asc": function(event){

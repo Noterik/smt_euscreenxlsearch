@@ -69,3 +69,7 @@ Page.prototype._createPopups = function () {
 };
 Page.prototype.events = {
 };
+Page.prototype.loadStylesheet = function(url){
+	var element = jQuery('<script type="text/javascript" src="' + url + '"></script>');
+	jQuery('head').append(element);
+};
