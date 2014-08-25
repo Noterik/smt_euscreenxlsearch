@@ -27,7 +27,7 @@ public class Searcher implements Runnable{
 	private Filter filter;
 	private Filter counterFilter;
 	private List<FsNode> nodes;
-	private HashMap<String, String> countriesForProviders;
+	private JSONObject countriesForProviders;
 	private boolean devel = false;
 	private boolean wantedna = true;
 	private HashMap<String, HashMap<String, FilterCondition>> counterConditions;
@@ -41,7 +41,7 @@ public class Searcher implements Runnable{
 		this.filter = filter;
 		this.devel = devel;
 		this.screen = null;
-		this.countriesForProviders = new HashMap<String, String>();
+		this.countriesForProviders = new JSONObject();
 		this.counterConditions = counterConditions;
 		this.counterFilter = this.createCounterFilter(counterConditions);
 	}
@@ -55,7 +55,7 @@ public class Searcher implements Runnable{
 		this.sortField = sortField;
 		this.filter = filter;
 		this.devel = devel;
-		this.countriesForProviders = new HashMap<String, String>();
+		this.countriesForProviders = new JSONObject();
 		this.counterConditions = counterConditions;
 		this.counterFilter = this.createCounterFilter(counterConditions);
 	}
@@ -81,6 +81,7 @@ public class Searcher implements Runnable{
 				String path = node.getPath();
 				String[] splits = path.split("/");
 				String provider = splits[4];
+				String providerNodeValue = node.getProperty(FieldMappings.getSystemFieldName("provider"));
 				
 				if(!this.countriesForProviders.containsKey(provider)){
 					FsNode providerNode = Fs.getNode("/domain/euscreenxl/user/" + provider + "/account/default");
@@ -89,6 +90,16 @@ public class Searcher implements Runnable{
 						this.countriesForProviders.put(provider, fullProviderString);
 					}catch(NullPointerException npe){
 						this.countriesForProviders.put(provider, node.getProperty(FieldMappings.getSystemFieldName("provider")));
+					}
+				}
+				
+				if(!this.countriesForProviders.containsKey(providerNodeValue)){
+					FsNode providerNode = Fs.getNode("/domain/euscreenxl/user/" + provider + "/account/default");
+					try{
+						String fullProviderString = providerNode.getProperty("birthdata");
+						this.countriesForProviders.put(providerNodeValue, fullProviderString);
+					}catch(NullPointerException npe){
+						this.countriesForProviders.put(providerNodeValue, node.getProperty(FieldMappings.getSystemFieldName("provider")));
 					}
 				}
 				
@@ -191,9 +202,9 @@ public class Searcher implements Runnable{
 			JSONObject results = createResultsSet();
 			
 			if(screen != null){
-				handler.handleResults(screen, results);
+				handler.handleResults(this, screen, results);
 			}else{
-				handler.handleResults(results);
+				handler.handleResults(this, results);
 			}
 
 			this.createCounts();
@@ -202,5 +213,8 @@ public class Searcher implements Runnable{
 			e.printStackTrace();
 		}
 	}
-
+	
+	public JSONObject getCountriesForProviders(){
+		return this.countriesForProviders;
+	}
 }

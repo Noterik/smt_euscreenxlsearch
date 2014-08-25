@@ -5,6 +5,7 @@ var Filter = function(options){
 	Component.apply(this, arguments);
 	
 	this.element = jQuery("#filter");
+	this.countries = {};
 	
 	//The boxes which will be filled with options.
 	this.fieldElements = {
@@ -39,7 +40,6 @@ Filter.prototype.events = {
 		this.element.find('#hide-extra-filters').hide();
 	},
 	"click #search-parameters .done button": function(event){
-		console.log("CLICK!");
 		jQuery('#search-parameters').removeClass('optionOpened');
 	},
 	"show.bs.collapse .filtercontent": function(event) {
@@ -56,7 +56,14 @@ Filter.prototype.populateFields = function(data){
 			
 	for(var category in fields){
 		var fieldsForCategory = fields[category];
-		self.fieldElements[category].html(_.template(self.optionTemplate, {options: fieldsForCategory}));
+		var templateParameters = {
+			options: fieldsForCategory
+		};
+		
+		if(category == "provider"){
+			templateParameters.countries = self.countries;
+		}
+		self.fieldElements[category].html(_.template(self.optionTemplate, templateParameters));
 	}
 	
 };
@@ -87,9 +94,7 @@ Filter.prototype.setCounts = function(data){
 		}
 	}
 };
-Filter.prototype.fieldClicked = function(event){
-	console.log(event.srcElement);
-	
+Filter.prototype.fieldClicked = function(event){	
 	var category = $(event.srcElement).parent().parent().data('category');
 	var fieldVal = $(event.srcElement).data('value');
 	
@@ -136,3 +141,7 @@ Filter.prototype.activateCategory = function(data){
 	
 	a.find('i').show();
 }
+Filter.prototype.setCountries = function(data){
+	console.log("setCountries(" + data + ")");
+	this.countries = JSON.parse(data);
+};

@@ -55,7 +55,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	 * Cached copy of all the nodes. Not sure if this is really neccesary. 
 	 */
 	private FSList allNodes;
-	private HashMap<String, String> countriesForProviders;
+	private JSONObject countriesForProviders;
 	
 	/*
 	 * Arraylist containing all the categories of fields. This will be used to categorize the conditions, and to fill 
@@ -73,7 +73,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	public EuscreenxlsearchApplication(String id) {
 		super(id); 
 		
-		this.countriesForProviders = new HashMap<String, String>();
+		this.countriesForProviders = new JSONObject();
 		
 		// allways 'loads' the full result set with all the items from the manager
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
@@ -141,6 +141,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
     }
 	
 	public void setInitialCounts(Screen s){
+		System.out.println("setInitialCounts()");
 		if(this.cachedCounts != null){
 			s.putMsg("filter", "", "setCounts(" + cachedCounts + ")");
 		}
@@ -281,53 +282,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		Searcher searcher = new Searcher(this, s, this.allNodes, query, activeType, sortDirection, sortField, filter, counterConditions, this.inDevelMode());
 		searchQueue.execute(searcher);
 		s.setProperty("searcher", searcher);
-		
-		/*
-		try{
-			if (query == null || query.equals("*")) { 
-				if (sortField.equals("id")) {
-					nodes = allNodes.getNodes(); // get them all unsorted
-				} else {
-					nodes = allNodes.getNodesSorted(sortField, sortDirection); // get them all sorted
-				}
-			} else {
-				if (sortField.equals("id")) {
-					nodes = allNodes.getNodesFiltered(query); // filter them but not sorted
-				} else {
-					nodes = allNodes.getNodesFilteredAndSorted(query, sortField, sortDirection); // and sorted
-				}
-			}
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		
-		//Get the filter from the screen object, this filter is created from the selection in the selectboxes on the page. 
-		nodes = filter.apply(nodes);
-						
-		s.setProperty("rawNodes", nodes);
-				
-		JSONObject results = createResultSet(nodes);
-		s.setProperty("results", results);
-		
-		if(s.getProperty("mobile") == null){
-			renderTabs(s);
-		}
-		
-		s.putMsg("resulttopbar", "", "show()");
-		this.setResultAmountOnClient(s);
-		
-		JSONObject activeFieldFilters = (JSONObject) s.getProperty("clientSelectedFields");
-		if(query == null && (activeType == null || activeType.equals("all")) && (activeFieldFilters == null || activeFieldFilters.isEmpty())){
-			s.putMsg("filter", "", "setCounts(" + this.getCounterObject(false) + ")");
-		}else{
-			s.putMsg("filter", "", "setCounts(" + this.getCounterObject(true, s) + ")");
-		}
-		
-		this.createTypeChunking(s);
-		this.sendChunkToClient(s);
-		s.putMsg(resultsElement, "", "loading(false)");
-		*/
 	}
 	
 	private void setHistoryParameter(Screen s, String key, String value){
@@ -713,7 +667,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	public void populateFieldsClient(Screen s){
 		JSONObject allFilters = this.createConditionFieldsForClient(s);
 		s.setProperty("allFilters", allFilters);
-		
+		s.putMsg("filter", "", "setCountries(" + this.countriesForProviders + ")");
 		s.putMsg("filter", "", "populateFields(" + allFilters + ")");
 	}
 	
@@ -897,7 +851,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 
 	@Override
-	public void handleResults(Screen s, JSONObject results) {
+	public void handleResults(Searcher searcher, Screen s, JSONObject results) {
 		// TODO Auto-generated method stub
 		String resultsElement = (String) s.getProperty("resultsElement");
 		System.out.println("handleResults()");
@@ -923,9 +877,9 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 
 	@Override
-	public void handleResults(JSONObject results) {
+	public void handleResults(Searcher searcher, JSONObject results) {
 		// TODO Auto-generated method stub
-		
+		this.countriesForProviders = searcher.getCountriesForProviders();
 	}
 
 	@Override
