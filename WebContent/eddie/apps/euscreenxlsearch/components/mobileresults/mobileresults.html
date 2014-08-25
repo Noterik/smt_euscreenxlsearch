@@ -4,7 +4,7 @@
 	  <div class="media-image col-md-4 col-sm-5 col-xs-6">
 	    <div class="media-wrapper">
 	      <img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
-      	  <% if(item.type == "video" || itemtype == "audio"){ %>
+      	  <% if(item.type == "video" || item.type == "audio"){ %>
 		  <span class="media-length"><%= item.duration %></span>
       	  <% } %>
       	  <span class="media-hue">

@@ -59,7 +59,7 @@ public class Searcher implements Runnable{
 		this.counterConditions = counterConditions;
 		this.counterFilter = this.createCounterFilter(counterConditions);
 	}
-	
+		
 	private JSONObject createResultsSet(){
 		JSONObject resultSet = new JSONObject();
 		JSONArray all = new JSONArray();
