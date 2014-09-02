@@ -1,5 +1,5 @@
 setUrlTrigger(/lou/euscreen/search.html,/lou/domain/webtv/html5application/euscreenxlsearch)
-loadStyleSheet(screen,generic)
+loadStylesheet(screen,elements)
 loadStylesheet(screen,specific)
 loadStylesheet(screen,additions)
 setRole(screen,"itempage")

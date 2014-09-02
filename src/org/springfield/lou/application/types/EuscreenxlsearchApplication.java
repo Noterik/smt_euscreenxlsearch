@@ -118,6 +118,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("footer", "/euscreenxlelements/footer");
 		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
+		
+		this.addReferidCSS("elements", "/euscreenxlelements/generic");
 	}
 	
 	public void init(Screen s){

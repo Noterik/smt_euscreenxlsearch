@@ -1,16 +1,17 @@
-<div class="dropdown">
-	<a role="button" data-toggle="dropdown" data-target="#" href="/page.html">
-    	<span class="colorgray">SORT BY</span>
-    	<span class="field">TITLE</span>
-    	<span class="caret"></span>
-    </a>
-    <ul id="sortBy" class="dropdown-menu pull-right" role="menu" aria-labelledby="sortBy">
-		<li><a href="#" value="TITLE" data-field="sort_title">TITLE</a></li>
-		<li><a href="#" value="YEAR" data-field="year">YEAR</a></li>
- 	</ul>
-</div>
 <!-- switch the order -->
-<div class="sortOption">
+<div class="sort-option">
 	<a href="#" class="hide sort-desc"><i class="fa fa-sort-alpha-desc"></i></a>
 	<a href="#" class="sort-asc"><i class="fa fa-sort-alpha-asc"></i></a>
+</div>
+<!-- sort by options -->
+<div class="wrap-dropdown">
+	<div class="dropdown">
+		<a role="button" data-toggle="dropdown" data-target="#" href="/page.html">
+			<span class="colorgray">SORT BY</span> TITLE <span class="caret"></span>
+		</a>
+	    <ul id="sortBy" class="dropdown-menu pull-right" role="menu" aria-labelledby="sortBy">
+         	<li><a href="#" value="TITLE" data-field="sort_title">TITLE</a></li>
+         	<li><a href="#" value="YEAR" data-field="year">YEAR</a></li>
+         </ul>
+	</div>
 </div>

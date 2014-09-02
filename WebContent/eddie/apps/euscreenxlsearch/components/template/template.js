@@ -10,7 +10,7 @@ var Template = function () {
      	followParent : '#right',
      	device : "desktop",
      	sidebarHeight : $(window).height() - $('.navbar').height(),
-     	bottom : 200,
+     	bottom : 120,
      	startClass : 'fix',
      	endClass : ''
      }); 
