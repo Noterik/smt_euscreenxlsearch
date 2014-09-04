@@ -23,8 +23,20 @@ public class FieldMappings {
         mappings.put("sort_title", "sort_title");
     }
     
+    private static final HashMap<String, String> interfaceMappings;
+    static
+    {
+    	interfaceMappings = new HashMap<String, String>();
+        interfaceMappings.put("SpatioTemporalInformation_TemporalInformation_productionYear", "YEAR");
+        interfaceMappings.put("sort_title", "TITLE");
+    }
+    
     public static String getSystemFieldName(String readable){
     	return mappings.get(readable);
+    }
+    
+    public static String getInterfaceFieldName(String readable){
+    	return interfaceMappings.get(readable);
     }
     
     public static String getReadable(String systemName){

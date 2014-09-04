@@ -99,7 +99,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		
 		Filter filter = new Filter();
 		
-		if(!this.inDevelMode()){
+		if(!this.inDevelMode()){ // Production mode
 			EqualsCondition condition = new EqualsCondition("public", "true");
 			filter.addCondition(condition);
 			nodes = filter.apply(nodes);
@@ -174,8 +174,11 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		
 		if(s.getParameter("sortField") != null){
 			String sortField = (String) s.getParameter("sortField");
-			s.setProperty("sortField", (String) s.getParameter("sortField"));
+			s.setProperty("sortField", sortField);
 			startupParameters.put("sortField", sortField);
+			
+			String body = "<span class='colorgray'>SORT BY</span> "+FieldMappings.getInterfaceFieldName(sortField)+" <span class='caret'></span>";
+			setContentOnScope(s,"sortHeader",body);
 		}	
 		
 		if(s.getParameter("sortDirection") != null){
@@ -491,6 +494,9 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		String sortField = FieldMappings.getSystemFieldName((String) message.get("field"));
 		s.setProperty("sortField", sortField);
 		this.setHistoryParameter(s, "sortField", sortField);
+		
+		String body = "<span class='colorgray'>SORT BY</span> "+(String) message.get("value")+" <span class='caret'></span>";
+		setContentOnScope(s,"sortHeader",body);
 		search(s);
 	}
 	

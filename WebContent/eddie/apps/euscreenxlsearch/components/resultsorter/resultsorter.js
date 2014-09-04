@@ -12,7 +12,8 @@ Resultsorter.prototype.events = {
 		var field = jQuery(event.srcElement).data('field');
 		var object = {
 			field: field,
-			direction: "up"
+			direction: "up",
+			value: jQuery(event.srcElement).attr('value')
 		};
 		this.element.find('.dropdown span.field').text(jQuery(event.srcElement).text());
 		eddie.putLou("", "setsorting(" + JSON.stringify(object) + ")");
