@@ -2,8 +2,8 @@
 	<% for(var i = 0; i < activeFields.length; i++){ %>
 	<% var field = activeFields[i] %>
 	<ul class="tag list-inline">
-		<li class="title"><%= field.category.toUpperCase() %></li>
-		<li class="content"><%= field.value.toUpperCase() %></li>
+		<li class="title"><%= field.category %></li>
+		<li class="content"><%= field.value %></li>
 		<li class="action"><a data-category="<%= field.category %>" data-value="<%= field.value %>" href="#">X</a></li>
 	</ul>
 	<% } %>

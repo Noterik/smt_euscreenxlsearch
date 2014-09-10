@@ -37,6 +37,7 @@ Activefields.prototype.setActiveFields = function(data){
 	for(var categoryName in fields){
 		var category = fields[categoryName];
 		for(var i = 0; i < category.length; i++){
+			categoryName = categoryName.substr(0, 1).toUpperCase() + categoryName.substr(1).toLowerCase();
 			templateObject.activeFields.push({
 				category: categoryName,
 				value: category[i]
