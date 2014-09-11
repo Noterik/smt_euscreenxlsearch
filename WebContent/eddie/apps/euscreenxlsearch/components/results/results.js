@@ -20,6 +20,9 @@ var Results = function(options){
 		},
 		"doc": {
 			element: self.element.find("#results-documents")
+		},
+		"series": {
+			element: self.element.find('#results-series')
 		}
 	}
 	

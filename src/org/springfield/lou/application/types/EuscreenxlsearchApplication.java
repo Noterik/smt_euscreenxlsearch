@@ -412,6 +412,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		types.add(new TypeCondition("picture"));
 		types.add(new TypeCondition("doc"));
 		types.add(new TypeCondition("audio"));
+		types.add(new TypeCondition("series"));
 		
 		Filter filter = new Filter(types);
 		
@@ -426,6 +427,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		types.put("picture", 1);
 		types.put("doc", 1);
 		types.put("audio", 1);
+		types.put("series", 1);
 		
 		s.setProperty("chunkSize", 10);
 		s.setProperty("typesChunks", types);

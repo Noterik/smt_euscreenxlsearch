@@ -132,6 +132,7 @@ public class Searcher implements Runnable{
 		types.add(new TypeCondition("picture"));
 		types.add(new TypeCondition("doc"));
 		types.add(new TypeCondition("audio"));
+		types.add(new TypeCondition("series"));
 		
 		Filter filter = new Filter(types);
 		
