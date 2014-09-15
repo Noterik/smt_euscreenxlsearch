@@ -6,3 +6,5 @@ dist/
 
 *.class
 /bin
+
+WebContent/WEB-INF/lib/smt_euscreenxlsearchapp.jar

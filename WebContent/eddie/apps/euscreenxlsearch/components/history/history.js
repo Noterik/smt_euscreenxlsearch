@@ -27,7 +27,7 @@ History.prototype.createURL = function(){
 			}else{
 				queryStr += "&";
 			}
-			queryStr += encodeURIComponent(name) + "=" + encodeURIComponent(this.parameters[name]);
+			queryStr += encodeURIComponent(name) + "=" + encodeURI(this.parameters[name]);
 			i++;
 		}
 		history.pushState(null, null, queryStr);
