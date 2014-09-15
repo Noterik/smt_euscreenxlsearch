@@ -12,12 +12,12 @@ History.prototype.setStartupParameters = function(parameters){
 History.prototype.setParameter = function(parameter){
 	parameter = JSON.parse(parameter);
 	for(var name in parameter){
-		this.parameters[name] = parameter[name];
+		this.parameters[name] = ASCII8Decoding.encode(parameter[name]);
 	}
 	this.createURL();
 };
 History.prototype.createURL = function(){
-	console.log("createURL");
+	console.log("createURL()");
 	if(window.history){
 		var queryStr = "";
 		var i = 0;

@@ -78,7 +78,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		// allways 'loads' the full result set with all the items from the manager
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
 		allNodes = FSListManager.get(uri);
-		
+				
 		this.availableConditionFieldCategories = new ArrayList<String>();
 		this.availableConditionFieldCategories.add("language");
 		this.availableConditionFieldCategories.add("decade");
@@ -200,7 +200,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			try {
 				String encodedString = (String) s.getParameter("activeFields");
 				startupParameters.put("activeFields", encodedString);
-				String activeFields = java.net.URLDecoder.decode(encodedString, "UTF-8");
+				String activeFields = org.springfield.fs.FsEncoding.decode(java.net.URLDecoder.decode(encodedString, "UTF-8"));
 				this.setClientSelectedField(s, activeFields, false);
 			} catch (UnsupportedEncodingException e) {
 				// TODO Auto-generated catch block
