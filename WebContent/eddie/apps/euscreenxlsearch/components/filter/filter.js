@@ -5,6 +5,8 @@ var Filter = function(options){
 	Component.apply(this, arguments);
 	
 	this.element = jQuery("#filter");
+	this.loadingElement = this.element.find('#filter-accordion > .loading');
+	this.moreElement = this.element.find('.more');
 	this.countries = {};
 	
 	//The boxes which will be filled with options.
@@ -24,7 +26,8 @@ var Filter = function(options){
 	
 	this.element.on('click', function(event){
 		self.fieldClicked.apply(self, arguments);
-	})
+	});
+	
 };
 
 Filter.prototype = Object.create(Component.prototype);
@@ -43,14 +46,25 @@ Filter.prototype.events = {
 		jQuery('#search-parameters').removeClass('optionOpened');
 	},
 	"show.bs.collapse .filtercontent": function(event) {
+		console.log("SHOW");
     	$("#"+event.currentTarget.id).parent().find("i").removeClass("glyphicon-chevron-down").addClass("glyphicon-chevron-up");
     },
     "hide.bs.collapse .filtercontent": function(event) {
+    	console.log("HIDE");
     	$("#"+event.currentTarget.id).parent().find("i").removeClass("glyphicon-chevron-up").addClass("glyphicon-chevron-down");
     }
 };
+Filter.prototype.loading = function(loading){
+	console.log("Filter.prototype.loading()");
+	if(loading == "true"){
+		this.loadingElement.show();
+	}else{
+		this.loadingElement.hide();
+	}
+};
 Filter.prototype.populateFields = function(data){
 	console.log("Filter.populateFields()");
+	console.log(data);
 	var self = this;
 	var fields = JSON.parse(data);
 			
@@ -69,6 +83,7 @@ Filter.prototype.populateFields = function(data){
 };
 Filter.prototype.setCounts = function(data){
 	console.log("Filter.prototype.setCounts()");
+	console.log(data);
 	var self = this;
 	
 	var fields = JSON.parse(data);
@@ -94,9 +109,9 @@ Filter.prototype.setCounts = function(data){
 		}
 	}
 };
-Filter.prototype.fieldClicked = function(event){	
-	var category = $(event.srcElement).parent().parent().data('category');
-	var fieldVal = $(event.srcElement).data('value');
+Filter.prototype.fieldClicked = function(event){
+	var category = $(event.target).parent().parent().data('category');
+	var fieldVal = $(event.target).data('value');
 	
 	var objectToSend = {};
 	
@@ -111,16 +126,19 @@ Filter.prototype.fieldClicked = function(event){
 	}, 500);
 };
 Filter.prototype.deactivateCategory = function(data){
-	console.log("deactivateCategory()");
+	console.log("deactivateCategory(" + data + ")");
 	var message = JSON.parse(data);
 	
 	var category = message.category;
 	var filterElement = this.fieldElements[category].parent().parent();
+	
+	console.log(filterElement);
 	var a = filterElement.find('> a');
 	
 	this.fieldElements[category].parent().removeClass('in').addClass('out');
 	
 	filterElement.addClass('inactive');
+	console.log(filterElement[0]);
 	a.on('click', function(){
 		event.stopPropagation();
 	});
@@ -129,7 +147,7 @@ Filter.prototype.deactivateCategory = function(data){
 	a.find('i').hide();
 };
 Filter.prototype.activateCategory = function(data){
-	console.log("activateCategory()");
+	console.log("activateCategory(" + data + ")");
 	var message = JSON.parse(data);
 	
 	var category = message.category;
@@ -141,6 +159,9 @@ Filter.prototype.activateCategory = function(data){
 	
 	a.find('i').show();
 }
+Filter.prototype.deactivate = function(){
+	this.element.find(".filter").addClass('inactive');
+};
 Filter.prototype.setCountries = function(data){
 	console.log("setCountries(" + data + ")");
 	this.countries = JSON.parse(data);

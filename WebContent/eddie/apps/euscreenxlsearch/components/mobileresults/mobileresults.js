@@ -51,6 +51,12 @@ Mobileresults.prototype.setResults = function(results){
 	}
 	
 };
+Mobileresults.prototype.startScreen = function(){
+	this.spinner.addClass('hidden');
+	this.clear();
+	this.noSearchElement.removeClass('hidden');
+	this.hideLoadMore();
+};
 Mobileresults.prototype.clear = function(){
 	console.log("Mobileresults.prototype.clear()");
 	this.list.html('');

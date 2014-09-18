@@ -1,4 +1,5 @@
 setUrlTrigger(/lou/euscreen/search.html,/lou/domain/webtv/html5application/euscreenxlsearch)
+loadContent(screen,favicon)
 loadStylesheet(screen,elements)
 loadStylesheet(screen,specific)
 loadStylesheet(screen,additions)

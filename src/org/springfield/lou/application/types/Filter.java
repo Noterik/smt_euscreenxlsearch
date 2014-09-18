@@ -60,4 +60,10 @@ public class Filter {
 	public void addCondition(FilterCondition condition){
 		this.conditions.add(condition);
 	}
+	
+	public void clear(){
+		for(Iterator<FilterCondition> i = conditions.iterator(); i.hasNext();){
+			i.next().clearPassed();
+		}
+	}
 }

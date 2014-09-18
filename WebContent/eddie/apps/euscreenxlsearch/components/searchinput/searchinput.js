@@ -18,10 +18,8 @@ Searchinput.prototype.setQuery = function(query){
 };
 Searchinput.prototype.search = function(){
 	var query = this.searchQueryInput.val();
-	if(!(query == "" || query == " " || query == null)){
-		var objectToSend = {
-	    	query: query
-	    };
-	    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
-	}
+	var objectToSend = {
+    	query: query
+    };
+    eddie.putLou('', 'query(' + JSON.stringify(objectToSend) + ')');
 };

@@ -48,6 +48,12 @@ Results.prototype.loading = function(loading){
 		this.spinner.addClass('hidden');
 	}
 };
+Results.prototype.startScreen = function(){
+	this.spinner.addClass('hidden');
+	this.clear();
+	this.noSearchElement.removeClass('hidden');
+	this.hideLoadMore();
+};
 Results.prototype.clear = function(){
 	for(page in this.pages){
 		this.pages[page].element.find('.list').html('');

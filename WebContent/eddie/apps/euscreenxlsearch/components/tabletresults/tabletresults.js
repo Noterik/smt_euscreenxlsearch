@@ -59,6 +59,12 @@ Tabletresults.prototype.loading = function(loading){
 		this.spinner.addClass('hidden');
 	}
 };
+Tabletresults.prototype.startScreen = function(){
+	this.spinner.addClass('hidden');
+	this.clear();
+	this.noSearchElement.removeClass('hidden');
+	this.hideLoadMore();
+};
 Tabletresults.prototype.clear = function(){
 	for(page in this.pages){
 		this.pages[page].element.find('.list').html('');

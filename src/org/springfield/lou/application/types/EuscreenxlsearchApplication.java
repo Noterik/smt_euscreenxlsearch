@@ -104,10 +104,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			filter.addCondition(condition);
 			nodes = filter.apply(nodes);
 		}
-		
-		Searcher searcher = new Searcher(this, allNodes, "*", "all", "down", "id", filter, categorisedConditions, this.inDevelMode());
-		Thread t = new Thread(searcher);
-		t.start();
 						
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
@@ -118,6 +114,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("footer", "/euscreenxlelements/footer");
 		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
+		this.addReferid("favicon", "/euscreenxlelements/favicon");
+		this.addReferid("history", "/euscreenxlelements/history");
 		
 		this.addReferidCSS("elements", "/euscreenxlelements/generic");
 	}
@@ -237,10 +235,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		
 		String query = (String) queryData.get("query");
 		
-		if(query.equals("")){
-			query = "*";
-		}
-		
 		query = query.toLowerCase();
 		if(s.getParameter("query") == null){
 			this.setHistoryParameter(s, "query", query);
@@ -256,7 +250,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	 * @param s The screen for which to execute the search
 	 */
 	public void search(Screen s){
-		System.out.println("EuscreenxlsearchApplication.search()");
 		String resultsElement = (String) s.getProperty("resultsElement");
 		
 		if(s.getProperty("searchQueue") == null){
@@ -278,15 +271,22 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		//Get the search parameter from the Screen object
 		String query = (String) s.getProperty("searchQuery");
 		
-		String sortDirection = (String) s.getProperty("sortDirection");
-		String sortField = (String) s.getProperty("sortField");
-		String activeType = (String) s.getProperty("activeType");
-		Filter filter = (Filter) s.getProperty("filter");
-		HashMap<String, HashMap<String, FilterCondition>> counterConditions = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
-				
-		Searcher searcher = new Searcher(this, s, this.allNodes, query, activeType, sortDirection, sortField, filter, counterConditions, this.inDevelMode());
-		searchQueue.execute(searcher);
-		s.setProperty("searcher", searcher);
+		if(query.trim().length() > 0){
+			String sortDirection = (String) s.getProperty("sortDirection");
+			String sortField = (String) s.getProperty("sortField");
+			String activeType = (String) s.getProperty("activeType");
+			Filter filter = (Filter) s.getProperty("filter");
+			HashMap<String, HashMap<String, FilterCondition>> counterConditions = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
+					
+			Searcher searcher = new Searcher(this, s, this.allNodes, query, activeType, sortDirection, sortField, filter, counterConditions, this.inDevelMode());
+			searchQueue.execute(searcher);
+			s.setProperty("searcher", searcher);
+			s.putMsg("filter", "", "loading(true)");
+		}else{
+			s.putMsg("filter", "", "deactivate()");
+			s.putMsg(resultsElement, "", "startScreen()");
+			s.putMsg("resultcounter", "", "setAmount()");
+		}
 	}
 	
 	private void setHistoryParameter(Screen s, String key, String value){
@@ -552,7 +552,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 						FilterCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value, ",");
 						catEntry.put(value, condition);
 						conditions.add(condition);
-					}else if(category.equals("topic")){
+					}else if(category.equals("topic") || category.equals("language")){
 						FilterCondition condition = new EqualsCondition(FieldMappings.getSystemFieldName(category), value);
 						catEntry.put(value, condition);
 						conditions.add(condition);
@@ -609,6 +609,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	private JSONArray createFieldsForCategoryForClient(Screen s, String category){
+		System.out.println("createFieldsForCategoryForClient()");
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
 		FSList fslist = FSListManager.get(uri);
 		List<FsNode> nodes = fslist.getNodes();
@@ -624,7 +625,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			
 			if(optionsStr != null){	
 				
-				if(!category.equals("topic")){
+				if(!FieldMappings.getReadable(category).equals("topic") && !FieldMappings.getReadable(category).equals("language")){
 
 					String[] optionsArr = optionsStr.split(",");
 					
@@ -656,6 +657,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			optionObject.put("value", option);
 			availableOptions.add(optionObject);
 		}
+		
+		System.out.println(availableOptions);
 		
 		return availableOptions;
 	}
@@ -793,7 +796,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 				
 		for(Iterator<String> iter = activeFields.keySet().iterator(); iter.hasNext();){
 			String key = iter.next();
-			if(!key.equals("decade") && !key.equals("topic")){
+			if(!key.equals("decade") && !key.equals("topic") && !key.equals("language")){
 				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
 				ArrayList<FilterCondition> equalsConditions = new ArrayList<FilterCondition>();
 				equalsConditions = createEqualsConditionsForField(FieldMappings.getSystemFieldName(key), allowedValues);
@@ -807,10 +810,10 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 				
 				OrCondition orCondition = new OrCondition(decadeConditions);
 				andCondition.add(orCondition);
-			}else if(key.equals("topic")){
+			}else if(key.equals("topic") || key.equals("language")){
 				ArrayList<String> allowedValues = (ArrayList) activeFields.get(key);
 				ArrayList<FilterCondition> decadeConditions = new ArrayList<FilterCondition>();
-				decadeConditions = createTopicConditions(FieldMappings.getSystemFieldName("topic"), allowedValues);
+				decadeConditions = createNotCommaSeperatedConditions(FieldMappings.getSystemFieldName(key), allowedValues);
 				
 				OrCondition orCondition = new OrCondition(decadeConditions);
 				andCondition.add(orCondition);
@@ -850,7 +853,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		return conditions;
 	}
 	
-	private ArrayList<FilterCondition> createTopicConditions(String field, ArrayList<String> allowedValues){
+	private ArrayList<FilterCondition> createNotCommaSeperatedConditions(String field, ArrayList<String> allowedValues){
 		System.out.println("createTopicConditions()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
@@ -884,6 +887,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		// TODO Auto-generated method stub
 		System.out.println("handleCounts()");
 		s.putMsg("filter", "", "setCounts(" + counts + ")");
+		s.putMsg("filter", "", "loading(false)");
 	}
 
 	@Override
