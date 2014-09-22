@@ -34,6 +34,7 @@ public class EqualsCondition extends FilterCondition {
 	@Override
 	public boolean allow(FsNode node) {
 		String value = node.getProperty(field);
+		
 		if(value != null){
 			
 			if(caseSensitive){

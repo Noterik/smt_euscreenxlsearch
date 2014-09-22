@@ -64,7 +64,6 @@ Filter.prototype.loading = function(loading){
 };
 Filter.prototype.populateFields = function(data){
 	console.log("Filter.populateFields()");
-	console.log(data);
 	var self = this;
 	var fields = JSON.parse(data);
 			
@@ -83,7 +82,6 @@ Filter.prototype.populateFields = function(data){
 };
 Filter.prototype.setCounts = function(data){
 	console.log("Filter.prototype.setCounts()");
-	console.log(data);
 	var self = this;
 	
 	var fields = JSON.parse(data);

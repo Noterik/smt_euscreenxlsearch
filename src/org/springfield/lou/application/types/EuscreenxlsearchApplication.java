@@ -657,9 +657,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			optionObject.put("value", option);
 			availableOptions.add(optionObject);
 		}
-		
-		System.out.println(availableOptions);
-		
+				
 		return availableOptions;
 	}
 	
@@ -886,6 +884,15 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	public void handleCounts(Screen s, JSONObject counts) {
 		// TODO Auto-generated method stub
 		System.out.println("handleCounts()");
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
+		System.out.println(activeFields);
+		//If there are still multiple counts for a category which is already active, make it inactive
+		for(Iterator<String> i = counts.keySet().iterator(); i.hasNext();){
+			String category = i.next();
+			if(activeFields != null && activeFields.containsKey(category)){
+				counts.put(category, new JSONArray());
+			}
+		}
 		s.putMsg("filter", "", "setCounts(" + counts + ")");
 		s.putMsg("filter", "", "loading(false)");
 	}
