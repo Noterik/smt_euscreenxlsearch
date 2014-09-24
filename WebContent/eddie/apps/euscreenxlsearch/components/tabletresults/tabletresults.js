@@ -33,11 +33,15 @@ var Tabletresults = function(options){
 	this.spinner = this.element.find('.spinner');
 	this.noSearchElement = this.element.find('#no-search-term');
 	this.noResultsElement = this.element.find('#no-results');
+	
+	
 
 	jQuery(window).on('scroll', function(){
 		if(!self.scrollBlock){
-			var difference = jQuery(window).height() - jQuery(window).scrollTop();
-			if(difference < 0){
+			var _docHeight = (document.height !== undefined) ? document.height : document.body.offsetHeight;
+			var difference = _docHeight - jQuery(window).scrollTop();
+			var wHeight = jQuery(window).height();
+			if(difference < wHeight * 2){
 				self.scrollBlock = true;
 				eddie.putLou('', 'getNextChunk()');
 			}

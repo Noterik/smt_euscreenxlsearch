@@ -114,7 +114,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("footer", "/euscreenxlelements/footer");
 		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
-		this.addReferid("favicon", "/euscreenxlelements/favicon");
 		this.addReferid("history", "/euscreenxlelements/history");
 		
 		this.addReferidCSS("elements", "/euscreenxlelements/generic");
@@ -133,6 +132,10 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			s.setProperty("resultsElement", "results");
 		}
 	}
+	
+	public String getFavicon() {
+        return "/eddie/apps/euscreenxlelements/img/favicon.png";
+    }
 	
 	private boolean inDevelMode() {
     	return LazyHomer.inDeveloperMode();

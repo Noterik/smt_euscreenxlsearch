@@ -1,4 +1,3 @@
-loadContent(screen,favicon)
 loadStyleSheet(screen,generic)
 loadStylesheet(screen,specific)
 loadStylesheet(screen,additions)
