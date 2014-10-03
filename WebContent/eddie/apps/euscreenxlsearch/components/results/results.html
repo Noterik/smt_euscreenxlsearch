@@ -1,7 +1,11 @@
 <script class="result-template" type="text/template">
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
+	  	<% if(item.type == "series"){ %>
+	  	<a href="/series.html?id=<%= item.id %>">
+	  	<% }else{ %>
 	  	<a href="/item.html?id=<%= item.id %>">
+	  	<% } %>
 		    <div class="media-wrapper">
 		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
 	      	  <% if(item.type == "video" || item.type == "audio"){ %>
@@ -20,14 +24,22 @@
 	  </div>
 	  <div class="media-metadata col-md-8 col-sm-7 col-xs-6">
 	    <a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>"><h3 class="media-heading">
-	      <%= item.title %>
+	      <% if(item.type != "series"){ %>
+	      	<%= item.title %>
+	      <% }else{ %>
+	      	<%= item.seriesEnglish %>
+	      <% } %>
 	    </h3></a>
 	    <span class="line">
 		    <span class="label">
 		      Original Title:
 		    </span>
 		    <span class="value">
-		     <%= item.originalTitle %>
+		     <% if(item.type != "series"){ %>
+		     	<%= item.originalTitle %>
+		     <% }else{ %>
+		     	<%= item.series %>
+		     <% } %>
 		    </span>
 		</span>
 		<span class="line">

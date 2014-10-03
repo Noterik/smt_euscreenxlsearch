@@ -112,6 +112,8 @@ public class Searcher implements Runnable{
 				result.put("year", node.getProperty(FieldMappings.getSystemFieldName("year")));
 				result.put("language", node.getProperty(FieldMappings.getSystemFieldName("language")));
 				result.put("duration", node.getProperty(FieldMappings.getSystemFieldName("duration")));
+				result.put("seriesEnglish", node.getProperty(FieldMappings.getSystemFieldName("seriesEnglish")));
+				result.put("series", node.getProperty(FieldMappings.getSystemFieldName("series")));
 				result.put("id", node.getId());
 								
 				resultsForType.add(result);

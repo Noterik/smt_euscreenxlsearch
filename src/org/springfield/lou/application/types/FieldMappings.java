@@ -20,6 +20,31 @@ public class FieldMappings {
         mappings.put("publisher", "publisherbroadcaster");
         mappings.put("genre", "genre");
         mappings.put("country", "SpatioTemporalInformation_SpatialInformation_CountryofProduction");
+        mappings.put("clipTitle", "clipTitle");
+        mappings.put("publisher", "publisherbroadcaster");
+        mappings.put("broadcastChannel", "firstBroadcastChannel");
+        mappings.put("broadcastDate", "SpatioTemporalInformation_TemporalInformation_broadcastDate");
+        mappings.put("geographicalCoverage", "SpatioTemporalInformation_SpatialInformation_GeographicalCoverage");
+        mappings.put("materialType", "TechnicalInformation_materialType");
+        mappings.put("itemType", "recordType");
+        mappings.put("itemColour", "TechnicalInformation_itemColor");
+        mappings.put("itemSound", "TechnicalInformation_itemSound");
+        mappings.put("thesaurusTerms", "ThesaurusTerm");
+        mappings.put("extendedDescription", "extendedDescription");
+        mappings.put("filename", "filename");
+        mappings.put("identifier", "identifier");
+        mappings.put("contributors", "contributor");
+        mappings.put("aspectRatio", "TechnicalInformation_aspectRatio");
+        mappings.put("furtherInformation", "information");
+        mappings.put("summaryOriginal", "summary");
+        mappings.put("summaryEnglish", "summaryInEnglish");
+        mappings.put("originalIdentifier", "originalIdentifier");
+        mappings.put("terms", "rightsTermsAndConditions");
+        mappings.put("series", "TitleSet_TitleSetInOriginalLanguage_seriesOrCollectionTitle");
+        mappings.put("seriesEnglish", "TitleSet_TitleSetInEnglish_seriesOrCollectionTitle");
+        mappings.put("lastBroadcastDate", "SpatioTemporalInformation_TemporalInformation_lastBroadCastDate");
+        mappings.put("lastBroadcastYear", "SpatioTemporalInformation_TemporalInformation_lastProductionYear");
+        mappings.put("landingPageURL", "landingPageURL");
         mappings.put("sort_title", "sort_title");
     }
     

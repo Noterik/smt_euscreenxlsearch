@@ -333,95 +333,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		s.putMsg(resultsElement, "", "clear()");
 	}
 	
-	private void setResultsOnClient(Screen s, JSONObject results){
-		System.out.println("setResultsOnClient()");
-		String resultsElement = (String) s.getProperty("resultsElement");
-		s.putMsg(resultsElement, "", "setResults(" + results + ")");
-	}
-	
-	private JSONObject createResultSet(List<FsNode> nodes){
-		JSONObject resultSet = new JSONObject();
-		JSONArray all = new JSONArray();
-		resultSet.put("all", all);
-		
-		Filter typeFilter = getTypeFilter();
-		
-		typeFilter.run(nodes);
-		
-		ArrayList<FilterCondition> types = typeFilter.getConditions();
-		
-		for(Iterator<FilterCondition> typeIterator = types.iterator(); typeIterator.hasNext();){
-			TypeCondition typeCondition = (TypeCondition) typeIterator.next();
-			String type = typeCondition.getAllowedValue();
-			
-			JSONArray resultsForType = new JSONArray();
-			
-			for(Iterator<FsNode> nodeIterator = typeCondition.getPassed().iterator(); nodeIterator.hasNext();){
-				FsNode node = nodeIterator.next();
-				
-				String path = node.getPath();
-				String[] splits = path.split("/");
-				String provider = splits[4];
-				
-				if(!this.countriesForProviders.containsKey(provider)){
-					FsNode providerNode = Fs.getNode("/domain/euscreenxl/user/" + provider + "/account/default");
-					try{
-						String fullProviderString = providerNode.getProperty("birthdata");
-						this.countriesForProviders.put(provider, fullProviderString);
-					}catch(NullPointerException npe){
-						this.countriesForProviders.put(provider, node.getProperty(FieldMappings.getSystemFieldName("provider")));
-					}
-				}
-				
-				JSONObject result = new JSONObject();
-				result.put("type", node.getName());
-				result.put("screenshot", this.setEdnaMapping(node.getProperty(FieldMappings.getSystemFieldName("screenshot"))));
-				result.put("title", node.getProperty(FieldMappings.getSystemFieldName("title")));
-				result.put("originalTitle", node.getProperty(FieldMappings.getSystemFieldName("originalTitle")));
-				result.put("provider", this.countriesForProviders.get(provider));
-				result.put("year", node.getProperty(FieldMappings.getSystemFieldName("year")));
-				result.put("language", node.getProperty(FieldMappings.getSystemFieldName("language")));
-				result.put("duration", node.getProperty(FieldMappings.getSystemFieldName("duration")));
-				result.put("id", node.getId());
-								
-				resultsForType.add(result);
-				all.add(result);
-			}
-			
-			resultSet.put(type, resultsForType);
-		} 
-				
-		return resultSet;
-	};
-	
-	private String setEdnaMapping(String screenshot) {
-		if(screenshot != null){
-			if (!wantedna) {
-				screenshot = screenshot.replace("edna/", "");
-			} else {
-				int pos = screenshot.indexOf("edna/");
-				if 	(pos!=-1) {
-					screenshot = "http://images.euscreenxl.eu/"+screenshot.substring(pos+5);
-				}
-			}
-		}
-		return screenshot;
-	}
-	
-	private Filter getTypeFilter(){
-		ArrayList<FilterCondition> types = new ArrayList<FilterCondition>();
-		
-		types.add(new TypeCondition("video"));
-		types.add(new TypeCondition("picture"));
-		types.add(new TypeCondition("doc"));
-		types.add(new TypeCondition("audio"));
-		types.add(new TypeCondition("series"));
-		
-		Filter filter = new Filter(types);
-		
-		return filter;
-	};
-	
 	public void createTypeChunking(Screen s){
 		HashMap<String, Integer> types = new HashMap<String, Integer>();
 	 
@@ -495,6 +406,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void setSorting(Screen s, String data){
+		String resultsElement = (String) s.getProperty("resultsElement");
+		s.putMsg(resultsElement, "", "hideLoadMore()");
 		JSONObject message = (JSONObject) JSONValue.parse(data);
 		String sortField = FieldMappings.getSystemFieldName((String) message.get("field"));
 		s.setProperty("sortField", sortField);
@@ -506,6 +419,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void setSortDirection(Screen s, String direction){
+		String resultsElement = (String) s.getProperty("resultsElement");
+		s.putMsg(resultsElement, "", "hideLoadMore()");
 		s.setProperty("sortDirection", direction);
 		this.setHistoryParameter(s, "sortDirection", direction);
 		search(s);

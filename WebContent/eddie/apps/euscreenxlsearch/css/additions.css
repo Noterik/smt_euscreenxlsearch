@@ -22,3 +22,10 @@
 	background-image: url(/eddie/apps/euscreenxlelements/img/spinner.gif); 
 	background-repeat: no-repeat; background-position: center center;
 }
+
+.results-loading{
+	background-image: url(/eddie/apps/euscreenxlelements/img/spinner.gif); 
+	background-repeat: no-repeat; 
+	background-position: center center;
+	height: 60px;
+}

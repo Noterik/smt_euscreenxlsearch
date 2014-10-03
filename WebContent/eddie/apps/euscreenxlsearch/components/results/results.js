@@ -65,6 +65,7 @@ Results.prototype.setResults = function(results){
 	this.noSearchElement.addClass('hidden');
 	this.spinner.addClass('hidden');
 	var results = JSON.parse(results);
+	console.log(results);
 		
 	for(var type in results){
 		var resultsForType = results[type];

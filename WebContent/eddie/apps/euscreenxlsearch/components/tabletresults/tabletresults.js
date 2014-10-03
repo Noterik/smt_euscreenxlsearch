@@ -101,8 +101,8 @@ Tabletresults.prototype.setResults = function(results){
 	eddie.putLou('template', 'positionSidebar()');
 };
 Tabletresults.prototype.hideLoadMore = function(){
-	this.element.find('a.show-more').addClass('hidden');
+	this.element.find('.results-loading').addClass('hidden');
 };
 Tabletresults.prototype.showLoadMore = function(){
-	this.element.find('a.show-more').removeClass('hidden');
+	this.element.find('.results-loading').removeClass('hidden');
 };
