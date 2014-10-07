@@ -23,7 +23,12 @@
 		 </a>
 	  </div>
 	  <div class="media-metadata col-md-8 col-sm-7 col-xs-6">
-	    <a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>"><h3 class="media-heading">
+	  	<% if(item.type == "series"){ %>
+	    <a href="http://beta.euscreenxl.eu/series.html?id=<%= item.id %>">
+	    <% }else{ %>
+	    <a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>">
+	    <% } %>
+	    <h3 class="media-heading">
 	      <% if(item.type != "series"){ %>
 	      	<%= item.title %>
 	      <% }else{ %>
