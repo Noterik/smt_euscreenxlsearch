@@ -6,8 +6,10 @@ import java.util.List;
 
 import org.json.simple.JSONObject;
 import org.springfield.fs.FsNode;
+import org.springfield.lou.application.types.conditions.AndCondition;
 import org.springfield.lou.application.types.conditions.EqualsCondition;
 import org.springfield.lou.application.types.conditions.FilterCondition;
+import org.springfield.lou.application.types.conditions.NotCondition;
 import org.springfield.lou.application.types.conditions.TypeCondition;
 import org.springfield.lou.screen.Screen;
 
@@ -37,11 +39,21 @@ public class Counter implements Runnable {
 
 	@Override
 	public void run() {
-		if(!this.devel){
-			Filter filter = new Filter();
-			filter.addCondition(new EqualsCondition("public", "true"));
-			nodes = filter.apply(nodes);
+		
+		Filter filter = new Filter();
+		AndCondition andCondition = new AndCondition();
+		
+		if(!this.devel){ // Production mode
+			EqualsCondition condition = new EqualsCondition("public", "true");
+			
+			andCondition.add(condition);
 		}
+		
+		NotCondition nCondition = new NotCondition("provider", "AGENCY");
+		andCondition.add(nCondition);
+		
+		filter.addCondition(andCondition);
+		nodes = filter.apply(nodes);
 		
 		if(!type.equals("all")){
 			Filter typeFilter = new Filter();

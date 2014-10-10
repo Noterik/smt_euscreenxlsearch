@@ -1,5 +1,9 @@
 <script class="result-template" type="text/template">
-	<a href="/item.html?id=<%= item.id %>">
+	<% if(item.type == "series"){ %>
+		<a href="/series.html?id=<%= item.id %>">
+	<% }else{ %>
+		<a href="/item.html?id=<%= item.id %>">
+	<% } %>
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-6">
 	    <div class="media-wrapper">
@@ -9,9 +13,9 @@
       	  <% } %>
       	  <span class="media-hue">
       	  	<% if(item.type == "video" || item.type == "audio"){ %>
-      	  		<i class="glyphicon glyphicon-play"></i>
+      	  		<i class="glyphicon glyphicon-play fa fa-play"></i>
       	  	<% }else{ %>
-      	  		<i class="glyphicon glyphicon-search"></i>
+      	  		<i class="glyphicon glyphicon-search fa fa-search"></i>
       	  	<% } %>
       	  </span>
       	  <i class="media-type <%= item.type %>"></i>

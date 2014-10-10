@@ -40,7 +40,6 @@ public class TimeRangeCondition extends FilterCondition {
 				return true;
 			}
 		}catch(NumberFormatException nfe){
-			System.out.println("No date set!");
 		}
 		
 		return false;

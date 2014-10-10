@@ -42,6 +42,7 @@ import org.springfield.lou.application.Html5Application;
 import org.springfield.lou.application.types.conditions.AndCondition;
 import org.springfield.lou.application.types.conditions.EqualsCondition;
 import org.springfield.lou.application.types.conditions.FilterCondition;
+import org.springfield.lou.application.types.conditions.NotCondition;
 import org.springfield.lou.application.types.conditions.OrCondition;
 import org.springfield.lou.application.types.conditions.TimeRangeCondition;
 import org.springfield.lou.application.types.conditions.TypeCondition;
@@ -92,18 +93,23 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		for(int i = 1900; i <= 2010; i += 10){
 			this.decades.add(i);
 		}
-		
-		HashMap<String, HashMap<String, FilterCondition>> categorisedConditions = this.createCategoryCountsConditions();
-		
+				
 		List<FsNode> nodes = allNodes.getNodes();
 		
 		Filter filter = new Filter();
+		AndCondition andCondition = new AndCondition();
 		
 		if(!this.inDevelMode()){ // Production mode
 			EqualsCondition condition = new EqualsCondition("public", "true");
-			filter.addCondition(condition);
-			nodes = filter.apply(nodes);
+			
+			andCondition.add(condition);
 		}
+		
+		NotCondition nCondition = new NotCondition("provider", "AGENCY");
+		andCondition.add(nCondition);
+		
+		filter.addCondition(andCondition);
+		nodes = filter.apply(nodes);
 						
 		// default scoop is each screen is its own location, so no multiscreen effects
 		setLocationScope("screen"); 
@@ -116,7 +122,12 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
 		this.addReferid("history", "/euscreenxlelements/history");
 		
-		this.addReferidCSS("elements", "/euscreenxlelements/generic");
+		this.addReferidCSS("fontawesome", "/euscreenxlelements/fontawesome");
+		this.addReferidCSS("bootstrap", "/euscreenxlelements/bootstrap");
+		this.addReferidCSS("theme", "/euscreenxlelements/theme");
+		this.addReferidCSS("genericadditions", "/euscreenxlelements/generic");
+		this.addReferidCSS("all", "/euscreenxlelements/all");
+		this.addReferidCSS("terms", "/euscreenxlelements/terms");
 	}
 	
 	public void init(Screen s){
