@@ -153,7 +153,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
     }
 	
 	public void setInitialCounts(Screen s){
-		System.out.println("setInitialCounts()");
 		if(this.cachedCounts != null){
 			s.putMsg("filter", "", "setCounts(" + cachedCounts + ")");
 		}
@@ -165,7 +164,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void setMobile(Screen s){
-		System.out.println("setMobile()");
 		s.setProperty("mobile", true);
 	}
 	
@@ -300,6 +298,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			s.putMsg("filter", "", "deactivate()");
 			s.putMsg(resultsElement, "", "startScreen()");
 			s.putMsg("resultcounter", "", "setAmount()");
+			s.setProperty("results", null);
+			this.renderTabs(s);
 		}
 	}
 	
@@ -312,18 +312,28 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	private void renderTabs(Screen s){
 		JSONObject message = new JSONObject();
 		JSONObject results = (JSONObject) s.getProperty("results");
-		String activeType = (String) s.getProperty("activeType");
-		for(Iterator<String> i = results.keySet().iterator(); i.hasNext();){
-			String type = i.next();
-			ArrayList resultsForType = (ArrayList) results.get(type);
-			if(resultsForType.size() > 0){
-				message.put(type, true);
-			}else{
-				if(type.equals(activeType)){
-					s.putMsg("tabs", "", "loadTab(all)");
+		if(results != null){
+			String activeType = (String) s.getProperty("activeType");
+			for(Iterator<String> i = results.keySet().iterator(); i.hasNext();){
+				String type = i.next();
+				ArrayList resultsForType = (ArrayList) results.get(type);
+				if(resultsForType.size() > 0){
+					message.put(type, true);
+				}else{
+					if(type.equals(activeType)){
+						s.putMsg("tabs", "", "loadTab(all)");
+					}
+					message.put(type, false);
 				}
-				message.put(type, false);
 			}
+			
+		}else{
+			message.put("all", true);
+			message.put("video", false);
+			message.put("audio", false);
+			message.put("picture", false);
+			message.put("series", false);
+			message.put("doc", false);
 		}
 		s.putMsg("tabs", "", "setActiveTabs(" + message + ")");
 	}
@@ -538,7 +548,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	private JSONArray createFieldsForCategoryForClient(Screen s, String category){
-		System.out.println("createFieldsForCategoryForClient()");
 		String uri = "/domain/euscreenxl/user/*/*"; // does this make sense, new way of mapping (daniel)
 		FSList fslist = FSListManager.get(uri);
 		List<FsNode> nodes = fslist.getNodes();
@@ -612,7 +621,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void createFilter(Screen s){
-		System.out.println("createFilter()");
 		Filter filter = new Filter();
 		if(!this.inDevelMode()){
 			filter.addCondition(new EqualsCondition("public", "true"));
@@ -632,9 +640,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	 * @param s The screen for which the filter was selected
 	 * @param data The data containing the userselection. 
 	 */
-	public void setClientSelectedField(Screen s, String data, boolean refresh){
-		System.out.println("EuscreenxlsearchApplication().setClientSelectedField(" + data + ")");
-		
+	public void setClientSelectedField(Screen s, String data, boolean refresh){		
 		s.putMsg("activefields", "", "loading(true)");
 		
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
@@ -760,7 +766,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	private ArrayList<FilterCondition> createEqualsConditionsForField(String field, ArrayList<String> allowedValues){
-		System.out.println("createEqualsConditionsForField()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			conditions.add(new EqualsCondition(field, i.next(), ","));
@@ -769,7 +774,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	private ArrayList<FilterCondition> createDecadeConditions(String field, ArrayList<String> allowedValues){
-		System.out.println("createDecadeConditions()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			String startStr = i.next();
@@ -781,7 +785,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	private ArrayList<FilterCondition> createNotCommaSeperatedConditions(String field, ArrayList<String> allowedValues){
-		System.out.println("createTopicConditions()");
 		ArrayList<FilterCondition> conditions = new ArrayList<FilterCondition>();
 		for(Iterator<String> i = allowedValues.iterator(); i.hasNext();){
 			String value = i.next();
@@ -794,7 +797,6 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	public void handleResults(Searcher searcher, Screen s, JSONObject results) {
 		// TODO Auto-generated method stub
 		String resultsElement = (String) s.getProperty("resultsElement");
-		System.out.println("handleResults()");
 		s.setProperty("results", results);
 		
 		if(s.getProperty("mobile") == null){
@@ -812,9 +814,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	@Override
 	public void handleCounts(Screen s, JSONObject counts) {
 		// TODO Auto-generated method stub
-		System.out.println("handleCounts()");
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
-		System.out.println(activeFields);
 		//If there are still multiple counts for a category which is already active, make it inactive
 		for(Iterator<String> i = counts.keySet().iterator(); i.hasNext();){
 			String category = i.next();
