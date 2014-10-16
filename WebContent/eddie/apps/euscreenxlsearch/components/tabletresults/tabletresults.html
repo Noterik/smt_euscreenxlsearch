@@ -7,7 +7,7 @@
 	  		<a href="/item.html?id=<%= item.id %>">
 	  	<% } %>
 		    <div class="media-wrapper">
-		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot)}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
+		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot + '?script=euscreen320t')}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
 	      	  <% if(item.type == "video" || item.type == "audio"){ %>
 			  <span class="media-length"><%= item.duration %></span>
 	      	  <% } %>
@@ -28,15 +28,24 @@
 	  	<% }else{ %>
 	    	<a href="http://beta.euscreenxl.eu/item.html?id=<%= item.id %>">
 	    <% } %>
-	    	<h3 class="media-heading">
+	    <h3 class="media-heading">
+	      <% if(item.type != "series"){ %>
 	      	<%= item.title %>
-	    </h3></a>
+	      <% }else{ %>
+	      	<%= item.seriesEnglish %>
+	      <% } %>
+	    </h3>
+	    </a>
 	    <span class="line">
 		    <span class="label">
 		      Original Title:
 		    </span>
 		    <span class="value">
-		     <%= item.originalTitle %>
+		     <% if(item.type != "series"){ %>
+		     	<%= item.originalTitle %>
+		     <% }else{ %>
+		     	<%= item.series %>
+		     <% } %>
 		    </span>
 		</span>
 		<span class="line">
