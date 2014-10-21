@@ -282,8 +282,13 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		
 		//Get the search parameter from the Screen object
 		String query = (String) s.getProperty("searchQuery");
+		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
+				
+		if(query == null && activeFields.size() > 0){
+			query = "*";
+		}
 		
-		if(query.trim().length() > 0){
+		if(query != null && query.trim().length() > 0){
 			String sortDirection = (String) s.getProperty("sortDirection");
 			String sortField = (String) s.getProperty("sortField");
 			String activeType = (String) s.getProperty("activeType");

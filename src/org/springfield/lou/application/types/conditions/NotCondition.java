@@ -11,7 +11,6 @@ public class NotCondition extends FilterCondition {
 	private boolean caseSensitive = false;
 	
 	public NotCondition(String field, String nAllowedValue) {
-		System.out.println("nAllowedValue: " + nAllowedValue);
 		// TODO Auto-generated constructor stub
 		this.field = field;
 		this.nAllowedValue = nAllowedValue;
@@ -61,8 +60,6 @@ public class NotCondition extends FilterCondition {
 					
 					this.getPassed().add(node);
 					return true;
-				}else{
-					System.out.println("HIDE YOUR WIFES, HIDE YOUR DAUGHTERS!!");
 				}
 				
 			}
