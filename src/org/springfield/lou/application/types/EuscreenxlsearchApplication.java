@@ -121,6 +121,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("linkinterceptor", "/euscreenxlelements/linkinterceptor");
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
 		this.addReferid("history", "/euscreenxlelements/history");
+		this.addReferid("analytics", "/euscreenxlelements/analytics");
 		
 		this.addReferidCSS("fontawesome", "/euscreenxlelements/fontawesome");
 		this.addReferidCSS("bootstrap", "/euscreenxlelements/bootstrap");

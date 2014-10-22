@@ -65,3 +65,5 @@ callServer(createFilter,screen,content)
 callServer(createCounterFilter,screen,content)
 callServer(setInitialCounts,screen)
 callServer(parseURLParams,screen)
+
+loadContent(screen,analytics);

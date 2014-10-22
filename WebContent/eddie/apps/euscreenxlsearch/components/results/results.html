@@ -18,7 +18,10 @@
 	      	  		<i class="glyphicon glyphicon-search fa fa-search"></i>
 	      	  	<% } %>
 	      	  </span>
-	      	  <i class="media-type <%= item.type %>"></i>
+	      	  <% if(item.type == "picture"){ item.type = "image" } %>
+      	  	  <% if(item.type == "doc"){ item.type = "text"} %>
+      	  	  <span class="media-logo <%= item.type %>"></span>
+	      	  <span class="media-type <%= item.type %>"></span>
 		    </div>
 		 </a>
 	  </div>
