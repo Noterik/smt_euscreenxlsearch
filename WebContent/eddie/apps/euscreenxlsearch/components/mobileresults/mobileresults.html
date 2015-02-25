@@ -36,6 +36,7 @@
 		      <%= item.provider %>
 		    </span>
 		</span>
+		<% if(item.language && item.type != "image"){ %>
 		<span class="line">
 		    <span class="label">
 		      Language:
@@ -44,6 +45,7 @@
 		   		<%= item.language %>
 		    </span>
 		</span>
+		<% } %>
 	  </div>
 	</div>
 	</a>

@@ -21,6 +21,7 @@
 package org.springfield.lou.application.types;
 
 import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,6 +38,7 @@ import org.json.simple.JSONValue;
 import org.springfield.fs.FSList;
 import org.springfield.fs.FSListManager;
 import org.springfield.fs.Fs;
+import org.springfield.fs.FsEncoding;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.application.Html5Application;
 import org.springfield.lou.application.types.conditions.AndCondition;
@@ -173,7 +175,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		boolean search = false;
 		if(s.getParameter("query") != null){
 			search = true;
-			String query = (String) s.getParameter("query");
+			String query = FsEncoding.decode((String) s.getParameter("query"));
 			s.setProperty("searchQuery", query);
 			if(s.getProperty("mobile") != null){
 				s.putMsg("mobilesearchinput", "", "setQuery(" + query + ")");
@@ -225,6 +227,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	};
 	
 	public void setSearchQuery(Screen s, String data){
+		System.out.println("EuscreenxlsearchApplication.setSearchQuery(" + data + ")");
 		this.setSearchQuery(s, data, true);
 	}
 	

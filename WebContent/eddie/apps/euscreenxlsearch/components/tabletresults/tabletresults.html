@@ -12,7 +12,7 @@
 			  <span class="media-length"><%= item.duration %></span>
 	      	  <% } %>
 	      	  <span class="media-hue">
-	      	  	<% if(item.type == "video" || item.type == "audio"){ %>
+	      	  	<% if(item.type == "video" || item.type == "audio" || item.type == "series"){ %>
 	      	  		<i class="glyphicon glyphicon-play fa fa-play"></i>
 	      	  	<% }else{ %>
 	      	  		<i class="glyphicon glyphicon-search fa fa-search"></i>
@@ -67,7 +67,7 @@
 		      <%= item.year %>
 		    </span>
 		</span>
-		<% if(item.language && item.type != "picture"){ %>
+		<% if(item.language && item.type != "image"){ %>
 		<span class="line">
 		    <span class="label">
 		      Language:

@@ -18,6 +18,7 @@ Searchinput.prototype.setQuery = function(query){
 };
 Searchinput.prototype.search = function(){
 	var query = this.searchQueryInput.val();
+	
 	var objectToSend = {
     	query: query
     };
