@@ -31,7 +31,7 @@ public class Counter implements Runnable {
 		this.counterConditions = counterConditions;
 		this.devel = devel;
 	}
-	
+
 	public Counter(SearcherResultsHandler handler, Screen s, String type, List<FsNode> nodes, Filter counterFilter, HashMap<String, HashMap<String, FilterCondition>> counterConditions, boolean devel) {
 		this(handler, type, nodes, counterFilter, counterConditions, devel);
 		this.screen = s;
@@ -39,31 +39,31 @@ public class Counter implements Runnable {
 
 	@Override
 	public void run() {
-		
+
 		Filter filter = new Filter();
 		AndCondition andCondition = new AndCondition();
-		
+
 		if(!this.devel){ // Production mode
 			EqualsCondition condition = new EqualsCondition("public", "true");
-			
+
 			andCondition.add(condition);
 		}
-		
+
 		NotCondition nCondition = new NotCondition("provider", "AGENCY");
 		andCondition.add(nCondition);
-		
+
 		filter.addCondition(andCondition);
 		nodes = filter.apply(nodes);
-		
+
 		if(!type.equals("all")){
 			Filter typeFilter = new Filter();
 			typeFilter.addCondition(new TypeCondition(type));
-			
+
 			nodes = typeFilter.apply(nodes);
 		}
-		
+
 		counterFilter.run(nodes);
-		
+
 		JSONObject countedResults = new JSONObject();
 		for(Iterator<String> catIterator = counterConditions.keySet().iterator(); catIterator.hasNext();){
 			String catName = catIterator.next();
