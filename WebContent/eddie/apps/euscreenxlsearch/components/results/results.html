@@ -2,9 +2,9 @@
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
 	  	<% if(item.type == "series"){ %>
-	  	<a href="/series.html?id=<%= item.id %>">
+	  	<a data-url="series" data-params-id="%= item.id %>">
 	  	<% }else{ %>
-	  	<a href="/item.html?id=<%= item.id %>">
+	  	<a data-url="item" data-params-id="<%= item.id %>">
 	  	<% } %>
 		    <div class="media-wrapper">
 		      	<img class="media-object img-responsive" alt="<%= item.originalTitle %>" src="<% if(item.screenshot){print(item.screenshot + '?script=euscreen320t')}else{print('http://player7.noterik.com/eddie/apps/euscreenxlelements/img/ic_thumbnail.gif')} %>">
@@ -27,9 +27,9 @@
 	  </div>
 	  <div class="media-metadata col-md-8 col-sm-7 col-xs-6">
 	  	<% if(item.type == "series"){ %>
-	    <a href="/series.html?id=<%= item.id %>">
+	    <a data-url="series" data-params-id="<%= item.id %>">
 	    <% }else{ %>
-	    <a href="/item.html?id=<%= item.id %>">
+	    <a data-url="item" data-params-id="<%= item.id %>">
 	    <% } %>
 	    <h3 class="media-heading">
 	      <% if(item.type != "series"){ %>

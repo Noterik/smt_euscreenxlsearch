@@ -21,7 +21,6 @@
 package org.springfield.lou.application.types;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -30,14 +29,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springfield.fs.FSList;
 import org.springfield.fs.FSListManager;
-import org.springfield.fs.Fs;
 import org.springfield.fs.FsEncoding;
 import org.springfield.fs.FsNode;
 import org.springfield.lou.application.Html5Application;
@@ -47,10 +44,11 @@ import org.springfield.lou.application.types.conditions.FilterCondition;
 import org.springfield.lou.application.types.conditions.NotCondition;
 import org.springfield.lou.application.types.conditions.OrCondition;
 import org.springfield.lou.application.types.conditions.TimeRangeCondition;
-import org.springfield.lou.application.types.conditions.TypeCondition;
+import org.springfield.lou.euscreen.config.Config;
+import org.springfield.lou.euscreen.config.ConfigEnvironment;
+import org.springfield.lou.euscreen.config.SettingNotExistException;
 import org.springfield.lou.homer.LazyHomer;
 import org.springfield.lou.screen.Screen;
-
 
 public class EuscreenxlsearchApplication extends Html5Application implements SearcherResultsHandler{
 	
@@ -68,6 +66,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	private ArrayList<Integer> decades;
 	private JSONObject cachedCounts = null;
 	private boolean wantedna = true;
+	private Config config;
 		
 	/*
 	 * Constructor for the preview application for EUScreen providers
@@ -75,6 +74,17 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	 */
 	public EuscreenxlsearchApplication(String id) {
 		super(id); 
+		
+		
+		try{
+			if(this.inDevelMode()){
+				config = new Config(ConfigEnvironment.DEVEL);
+			}else{
+				config = new Config();
+			}
+		}catch(SettingNotExistException snee){
+			snee.printStackTrace();
+		}
 		
 		this.countriesForProviders = new JSONObject();
 		
@@ -124,6 +134,8 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.addReferid("headerhider", "/euscreenxlelements/headerhider");
 		this.addReferid("history", "/euscreenxlelements/history");
 		this.addReferid("analytics", "/euscreenxlelements/analytics");
+		this.addReferid("config", "/euscreenxlelements/config");
+		this.addReferid("urltransformer", "/euscreenxlelements/urltransformer");
 		
 		this.addReferidCSS("fontawesome", "/euscreenxlelements/fontawesome");
 		this.addReferidCSS("bootstrap", "/euscreenxlelements/bootstrap");
@@ -134,6 +146,14 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void init(Screen s){
+
+		try {
+			s.putMsg("config", "", "update(" + config.getSettingsJSON() + ")");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		if(!this.inDevelMode()){
 			s.putMsg("linkinterceptor", "", "interceptLinks()");
 		}

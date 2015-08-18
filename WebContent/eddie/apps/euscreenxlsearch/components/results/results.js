@@ -83,7 +83,7 @@ Results.prototype.setResults = function(results){
 		}
 		
 	}
-	
+	eddie.getComponent('urltransformer').run();
 	eddie.putLou('template', 'positionSidebar()');
 };
 Results.prototype.hideLoadMore = function(){
