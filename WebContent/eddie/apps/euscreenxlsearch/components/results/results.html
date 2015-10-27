@@ -2,7 +2,7 @@
 	<div class="row media-item" data-id="<%= item.id %>">
 	  <div class="media-image col-md-4 col-sm-5 col-xs-5">
 	  	<% if(item.type == "series"){ %>
-	  	<a data-url="series" data-params-id="%= item.id %>">
+	  	<a data-url="series" data-params-id="<%= item.id %>">
 	  	<% }else{ %>
 	  	<a data-url="item" data-params-id="<%= item.id %>">
 	  	<% } %>
