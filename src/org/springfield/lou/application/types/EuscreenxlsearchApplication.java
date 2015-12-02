@@ -195,7 +195,12 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		boolean search = false;
 		if(s.getParameter("query") != null){
 			search = true;
-			String query = FsEncoding.decode((String) s.getParameter("query"));
+			
+			String query = (String) s.getParameter("query");
+			System.out.println("QUERY: " + query);
+			query = FsEncoding.decode(query);
+			System.out.println("DECODED QUERY:" + query);
+			
 			s.setProperty("searchQuery", query);
 			if(s.getProperty("mobile") != null){
 				s.putMsg("mobilesearchinput", "", "setQuery(" + query + ")");
