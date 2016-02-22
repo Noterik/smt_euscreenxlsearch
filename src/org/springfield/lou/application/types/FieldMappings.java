@@ -45,9 +45,9 @@ public class FieldMappings {
         mappings.put("lastBroadcastDate", "SpatioTemporalInformation_TemporalInformation_lastBroadCastDate");
         mappings.put("lastBroadcastYear", "SpatioTemporalInformation_TemporalInformation_lastProductionYear");
         mappings.put("landingPageURL", "landingPageURL");
-        mappings.put("sort_title", "sort_title");
+        mappings.put("sort_title", "TitleSet_TitleSetInEnglish_title");
     }
-    
+        
     private static final HashMap<String, String> interfaceMappings;
     static
     {

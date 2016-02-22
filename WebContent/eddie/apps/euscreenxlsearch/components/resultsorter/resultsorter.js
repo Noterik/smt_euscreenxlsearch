@@ -9,14 +9,18 @@ var Resultsorter = function(options){
 Resultsorter.prototype = Object.create(Component.prototype);
 Resultsorter.prototype.events = {
 	"click #sortBy li a": function(event){
-		var field = jQuery(event.srcElement).data('field');
+		var $src = jQuery(event.target);
+		var field = $src.data('field');
 		var object = {
 			field: field,
 			direction: "up",
-			value: jQuery(event.srcElement).attr('value')
+			value: $src.data('value')
 		};
-		this.element.find('.dropdown span.field').text(jQuery(event.srcElement).text());
-		eddie.putLou("", "setsorting(" + JSON.stringify(object) + ")");
+		this.element.find('.dropdown span.field').text($src.text());
+		var command = "setSorting(" + JSON.stringify(object) + ")";
+		
+		console.log("COMMAND = " + command);
+		eddie.putLou("", command);
 	},
 	"click #resultsorter .sort-asc": function(event){
 		event.preventDefault();

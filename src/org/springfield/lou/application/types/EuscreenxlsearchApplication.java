@@ -107,6 +107,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		}
 				
 		List<FsNode> nodes = allNodes.getNodes();
+		System.out.println("NODES: " + nodes.size());
 		
 		Filter filter = new Filter();
 		AndCondition andCondition = new AndCondition();
@@ -323,8 +324,9 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 			String activeType = (String) s.getProperty("activeType");
 			Filter filter = (Filter) s.getProperty("filter");
 			HashMap<String, HashMap<String, FilterCondition>> counterConditions = (HashMap<String, HashMap<String, FilterCondition>>) s.getProperty("counterConditions");
-					
-			Searcher searcher = new Searcher(this, s, this.allNodes, query, activeType, sortDirection, sortField, filter, counterConditions, this.inDevelMode());
+			
+			System.out.println("IN DEVEL: " + this.inDevelMode());
+			Searcher searcher = new Searcher(this, s, this.allNodes, query, activeType, sortDirection, sortField, filter, counterConditions, false);
 			searchQueue.execute(searcher);
 			s.setProperty("searcher", searcher);
 			s.putMsg("filter", "", "loading(true)");
@@ -422,7 +424,10 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		HashMap<String, Integer> types = (HashMap<String, Integer>) s.getProperty("typesChunks");
 		String type = (String) s.getProperty("activeType");
 		
-		types.put(type, types.get(type) + 1);
+		System.out.println("CURRENT CHUNK: " + types.get(type));
+		int nextChunk = types.get(type) + 1;
+		System.out.println("NEXT CHUNK: " + nextChunk);
+		types.put(type, nextChunk);
 		sendChunkToClient(s);
 	};
 	
@@ -449,7 +454,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		}else{
 			s.putMsg(resultsElement, "", "showLoadMore()");
 		}
-		
+				
 		values.addAll(0, resultsForType.subList(start, end));
 		
 		s.putMsg(resultsElement, "", "setResults(" + chunk + ")");
@@ -457,10 +462,11 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	
 	public void setDefaultSorting(Screen s){
 		s.setProperty("sortDirection", "up");
-		s.setProperty("sortField", FieldMappings.getSystemFieldName("sort_title"));
+		s.setProperty("sortField", FieldMappings.getSystemFieldName("year"));
 	}
 	
-	public void setSorting(Screen s, String data){
+	public void actionSetsorting(Screen s, String data){
+		System.out.println("setSorting(" + data + ")");
 		String resultsElement = (String) s.getProperty("resultsElement");
 		s.putMsg(resultsElement, "", "hideLoadMore()");
 		JSONObject message = (JSONObject) JSONValue.parse(data);
@@ -469,11 +475,13 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.setHistoryParameter(s, "sortField", sortField);
 		
 		String body = "<span class='colorgray'>SORT BY</span> "+(String) message.get("value")+" <span class='caret'></span>";
+		System.out.println("BODY: " + body);
 		setContentOnScope(s,"sortHeader",body);
 		search(s);
 	}
 	
 	public void setSortDirection(Screen s, String direction){
+		System.out.println("setSortDirection(" + direction + ")");
 		String resultsElement = (String) s.getProperty("resultsElement");
 		s.putMsg(resultsElement, "", "hideLoadMore()");
 		s.setProperty("sortDirection", direction);
@@ -656,6 +664,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	
 	public void createFilter(Screen s){
 		Filter filter = new Filter();
+		
 		if(!this.inDevelMode()){
 			filter.addCondition(new EqualsCondition("public", "true"));
 		}
@@ -869,6 +878,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	@Override
 	public void handleCounts(JSONObject counts) {
 		// TODO Auto-generated method stub
+		System.out.println("COUNTS: " + counts);
 		this.cachedCounts = counts;
 	}
 

@@ -1,9 +1,12 @@
 package org.springfield.lou.application.types;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,7 +35,8 @@ public class Searcher implements Runnable{
 	private boolean wantedna = true;
 	private HashMap<String, HashMap<String, FilterCondition>> counterConditions;
 	
-	public Searcher(SearcherResultsHandler handler, FSList allNodes, String query, String type, String sortDirection, String sortField, Filter filter, HashMap<String, HashMap<String, FilterCondition>> counterConditions, boolean devel){
+		
+	public Searcher(SearcherResultsHandler handler, FSList allNodes, String query, String type, String sortDirection, String sortField, Filter filter, HashMap<String, HashMap<String, FilterCondition>> counterConditions, boolean devel){		
 		this.allNodes = allNodes;
 		this.handler = handler;
 		this.query = query;
@@ -59,6 +63,15 @@ public class Searcher implements Runnable{
 		this.counterConditions = counterConditions;
 		this.counterFilter = this.createCounterFilter(counterConditions);
 	}
+	
+	private List<FsNode> sortNodes(List<FsNode> nodes){
+		Comparator<FsNode> comparator = Sorters.getSorter(this.sortField);
+		Collections.sort(nodes, comparator);
+		if(this.sortDirection.equals("up")){
+			Collections.reverse(nodes);
+		}
+		return nodes;
+	}
 		
 	private JSONObject createResultsSet(){
 		JSONObject resultSet = new JSONObject();
@@ -73,9 +86,13 @@ public class Searcher implements Runnable{
 			TypeCondition typeCondition = (TypeCondition) typeIterator.next();
 			String type = typeCondition.getAllowedValue();
 			
-			JSONArray resultsForType = new JSONArray();
+			JSONArray resultsForType = new JSONArray();	
 			
-			for(Iterator<FsNode> nodeIterator = typeCondition.getPassed().iterator(); nodeIterator.hasNext();){
+			List<FsNode> passed = typeCondition.getPassed();
+			
+			passed = sortNodes(passed);
+			
+			for(Iterator<FsNode> nodeIterator = passed.iterator(); nodeIterator.hasNext();){
 				FsNode node = nodeIterator.next();
 				
 				String path = node.getPath();
@@ -119,11 +136,11 @@ public class Searcher implements Runnable{
 				resultsForType.add(result);
 				all.add(result);
 			}
-			
+			System.out.println("RESULTS FOR TYPE: " + type + " LENGTH = " + resultsForType.size());
 			resultSet.put(type, resultsForType);
 		} 
 				
-		
+		System.out.println("RESULT SET: " + resultSet);
 		return resultSet;
 	}
 	
@@ -169,8 +186,6 @@ public class Searcher implements Runnable{
 	}
 	
 	private void createCounts(){
-		System.out.println("createCounts()");
-		System.out.println(counterFilter);
 		Counter c = new Counter(handler, screen, type, nodes, counterFilter, counterConditions, devel);
 		Thread t = new Thread(c);
 		t.start();
@@ -184,21 +199,12 @@ public class Searcher implements Runnable{
 	@Override
 	public void run() {
 		System.out.println("Starting search thread!");
-		// TODO Auto-generated method stub
-		
-		try{
+		// TODO Auto-generated method stub				
+		try{			
 			if (query == null || query.equals("*")) { 
-				if (sortField.equals("id")) {
-					nodes = allNodes.getNodes(); // get them all unsorted
-				} else {
-					nodes = allNodes.getNodesSorted(sortField, sortDirection); // get them all sorted
-				}
+				nodes = allNodes.getNodes();
 			} else {
-				if (sortField.equals("id")) {
-					nodes = allNodes.getNodesFiltered(query); // filter them but not sorted
-				} else {
-					nodes = allNodes.getNodesFilteredAndSorted(query, sortField, sortDirection); // and sorted
-				}
+				nodes = allNodes.getNodesFiltered(query); // filter them but not sorted
 			}
 			
 			nodes = filter.apply(nodes);

@@ -33,34 +33,36 @@ public class EqualsCondition extends FilterCondition {
 
 	@Override
 	public boolean allow(FsNode node) {
-		String value = node.getProperty(field);
-		
-		if(value != null){
+		if(node != null){
+			String value = node.getProperty(field);
 			
-			if(caseSensitive){
-				value = value.toLowerCase();
-				allowedValue = allowedValue.toLowerCase();
-			}
-			
-			if(trim){
-				value = value.trim();
-			}
-			
-			String[] values;
-			if(fieldSeperator != null){
-				values = value.split(fieldSeperator);
-			}else{
-				values = new String[]{value};
-			}
-			
-			for(int i = 0; i < values.length; i++){
-				String singleValue = values[i];
-								
-				if(allowedValue.equals(singleValue)){
-					this.getPassed().add(node);
-					return true;
+			if(value != null){
+				
+				if(caseSensitive){
+					value = value.toLowerCase();
+					allowedValue = allowedValue.toLowerCase();
 				}
 				
+				if(trim){
+					value = value.trim();
+				}
+				
+				String[] values;
+				if(fieldSeperator != null){
+					values = value.split(fieldSeperator);
+				}else{
+					values = new String[]{value};
+				}
+				
+				for(int i = 0; i < values.length; i++){
+					String singleValue = values[i];
+									
+					if(allowedValue.equals(singleValue)){
+						this.getPassed().add(node);
+						return true;
+					}
+					
+				}
 			}
 		}
 		return false;
