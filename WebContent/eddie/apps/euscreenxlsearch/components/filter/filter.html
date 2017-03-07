@@ -12,13 +12,11 @@
 <script id="filter-option-template" type="text/template">
 	<% for(var i = 0; i < options.length; i++){ %>
 		<% var option = options[i] %>
-		<% if(typeof countries !== 'undefined' && option.value && option.value != "Memoriav-SRF"){ %>
+		<% if(typeof countries !== 'undefined' && option.value){ %>
 			<% var country = countries[option.value]; console.log(country); %>
 			<li><a href="#" data-value="<%= option.value %>"><% if(countries[option.value]){print(countries[option.value]);}else{print(option.value);} %></a></li>
-		<% }else if(option.value && option.value != "Memoriav-SRF"){ %>
+		<% }else if(option.value){ %>
 			<li><a href="#" data-value="<%= option.value %>"><%= option.label %></a></li>
-		<% } else { %>
-			<li><a href="#" data-value="<%= option.value %>">MEMORIAV</a></li>
 		<% } %>
 	<% } %>
 </script>

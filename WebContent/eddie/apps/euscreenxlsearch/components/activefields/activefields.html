@@ -3,11 +3,7 @@
 	<% var field = activeFields[i] %>
 	<ul class="tag list-inline">
 		<li class="title"><%= field.category %></li>
-		<% if (field.value != "Memoriav-SRF"){ %>
-			<li class="content"><%= field.value %></li>
-		<% }else{ %>
-			<li class="content">MEMORIAV</li>
-		<% } %>
+		<li class="content"><%= field.value %></li>
 		<li class="action"><a data-category="<%= field.category.toLowerCase() %>" data-value="<%= field.value %>" href="#">X</a></li>
 	</ul>
 	<% } %>
