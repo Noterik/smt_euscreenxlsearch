@@ -102,7 +102,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		this.availableConditionFieldCategories.add("country");
 		
 		this.decades = new ArrayList<Integer>();
-		for(int i = 1900; i <= 2010; i += 10){
+		for(int i = 1900; i <= 2030; i += 10){
 			this.decades.add(i);
 		}
 				
@@ -314,9 +314,11 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 		String query = (String) s.getProperty("searchQuery");
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 				
-		if(query == null && activeFields.size() > 0){
+		if(query == null || query.equals("")) {
 			query = "*";
 		}
+		
+		System.out.println("query ->"+query+"<-");
 		
 		if(query != null && query.trim().length() > 0){
 			String sortDirection = (String) s.getProperty("sortDirection");

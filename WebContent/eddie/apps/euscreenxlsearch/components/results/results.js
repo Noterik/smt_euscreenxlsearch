@@ -32,6 +32,17 @@ var Results = function(options){
 	this.spinner = this.element.find('.spinner');
 	this.noSearchElement = this.element.find('#no-search-term');
 	this.noResultsElement = this.element.find('#no-results');
+	
+	//intercept item request to be able to scroll to the item in the results when going back
+	this.element.on('click', '.media-item a', function() {
+	    event.preventDefault();
+
+	    var href = jQuery(this).attr("href"); 
+	   
+	    var lastItem = jQuery(this).data("params-id");
+
+	    window.location = href;
+	});	
 };
 
 Results.prototype = Object.create(Component.prototype);

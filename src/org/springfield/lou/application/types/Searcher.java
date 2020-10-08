@@ -140,7 +140,7 @@ public class Searcher implements Runnable{
 			resultSet.put(type, resultsForType);
 		} 
 				
-		System.out.println("RESULT SET: " + resultSet);
+		//System.out.println("RESULT SET: " + resultSet);
 		return resultSet;
 	}
 	
