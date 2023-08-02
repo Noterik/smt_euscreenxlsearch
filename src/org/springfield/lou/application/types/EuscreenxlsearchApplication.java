@@ -674,6 +674,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	}
 	
 	public void setClientSelectedField(Screen s, String data){
+		System.out.println("EUscreenXLSearchApplication setClientSelectedField "+data);
 		this.setClientSelectedField(s, data, true);
 		JSONObject activeFields = (JSONObject) s.getProperty("clientSelectedFields");
 		this.setHistoryParameter(s, "activeFields", activeFields.toJSONString());
@@ -737,6 +738,7 @@ public class EuscreenxlsearchApplication extends Html5Application implements Sea
 	 * @param data The data containing information as to what filter was removed. 
 	 */
 	public void removeClientSelectedField(Screen s, String data){
+		System.out.println("EUscreenXLSearchApplication removeClientSelectedField "+data);
 		s.putMsg("activefields", "", "loading(true)");
 		
 		JSONObject message = (JSONObject) JSONValue.parse(data);

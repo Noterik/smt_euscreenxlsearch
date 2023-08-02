@@ -12,7 +12,6 @@ callServer(setDefaultType,screen,content)
 
 .when device=desktop
 loadContent(screen,template)
-loadContent(screen,footer)
 loadContent(screen,results)
 loadContent(screen,tabs)
 loadContent(screen,searchinput)
@@ -31,7 +30,6 @@ loadContent(screen,mobiletemplate)
 loadContent(screen,mediaselector)
 loadContent(screen,mobileresults)
 loadContent(screen,mobilesearchinput)
-loadContent(screen,headerhider)
 
 .when device=aphone
 callServer(setMobile,screen)
@@ -39,7 +37,6 @@ loadContent(screen,mobiletemplate)
 loadContent(screen,mediaselector)
 loadContent(screen,mobileresults)
 loadContent(screen,mobilesearchinput)
-loadContent(screen,headerhider)
 
 .when device=atablet
 callServer(setTablet,screen)
@@ -47,10 +44,8 @@ loadContent(screen,template)
 loadContent(screen,tabletresults)
 loadContent(screen,tabs)
 loadContent(screen,searchinput)
-removeContent(screen,footer)
 
 loadContent(screen,config)
-loadContent(screen,header)
 loadContent(screen,mobilenav)
 loadContent(screen,activefields)
 loadContent(screen,filter)

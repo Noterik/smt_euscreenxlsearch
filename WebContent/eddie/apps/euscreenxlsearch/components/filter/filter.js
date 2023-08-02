@@ -1,12 +1,11 @@
 var Filter = function(options){
-	console.log("Filter()");
+    	console.log("Filter()");
 	var self = this;
 	
 	Component.apply(this, arguments);
 	
 	this.element = jQuery("#filter");
 	this.loadingElement = this.element.find('#filter-accordion > .loading');
-	this.moreElement = this.element.find('.more');
 	this.countries = {};
 	
 	//The boxes which will be filled with options.
@@ -96,9 +95,9 @@ Filter.prototype.setCounts = function(data){
 		if(availableFields.length > 1){
 			this.activateCategory(JSON.stringify(args));
 			for(var value in counts){
-				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span.badge').remove();
+				self.fieldElements[category].find('a[data-value="' + value + '"]').parent().find('span').remove();
 				if(!counts[value] == 0){
-					self.fieldElements[category].find('a[data-value="' + value + '"]').parent().append(_.template(self.counterTemplate, {counter: {amount: counts[value]}}));
+					self.fieldElements[category].find('a[data-value="' + value + '"]').append(_.template(self.counterTemplate, {counter: {amount: counts[value]}}));
 					self.fieldElements[category].find('a[data-value="' + value + '"]').parent().show();
 				}
 			}
@@ -143,6 +142,9 @@ Filter.prototype.deactivateCategory = function(data){
 	
 	a.find('i').removeClass('glyphicon-chevron-up').addClass('glyphicon-chevron-down');
 	a.find('i').hide();
+	
+	this.fieldElements[category].find('input:checkbox').prop('checked', false);
+	
 };
 Filter.prototype.activateCategory = function(data){
 	console.log("activateCategory(" + data + ")");

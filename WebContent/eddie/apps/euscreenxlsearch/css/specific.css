@@ -4,9 +4,10 @@
 * This file contains the search results styles which are to be applied on all devices specifically for search results page.
 * Certain device may override these styles in their own stylesheet.
 */
-.search .main.search-results {
-  padding-top: 70px;
+.page.search.desktop {
+	margin-top: 20px;
 }
+
 .search .main .left {
   -webkit-overflow-scrolling: touch;
 }
@@ -16,11 +17,12 @@
 }
 .search .main .left .row .header {
   display: block;
-  font-size: 0.77em;
-  color: #808080;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  font-weight: 500;
+  font-size: 17px;
+  color: #1E1E1E;
   letter-spacing: 1px;
   padding: 25px 25px 10px 25px;
-  color: #8cc63f;
 }
 .search .main .left .row .searchbar {
   background: #ffffff;
@@ -245,56 +247,36 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 .search .main .left .row .mediaselector .accordion .filter .filtercontent .listing li:after {
   clear: both;
 }
+.search .main .left .row .filters .accordion .filter .filtercontent .listing li input,
+.search .main .left .row .mediaselector .accordion .filter .filtercontent .listing li input {
+  margin: 12px 0 9px 25px;
+  float: left;
+}
 .search .main .left .row .filters .accordion .filter .filtercontent .listing li a,
 .search .main .left .row .mediaselector .accordion .filter .filtercontent .listing li a {
-  padding: 9px 0 9px 25px;
+  padding: 9px 0 9px 5px;
   display: block;
-  width: 70%;
+  width: 85%;
   float: left;
-  color: #808080;
+  color: #0E0E0E;
+  font-size: 14px;
+  text-transform: uppercase;
 }
-.search .main .left .row .filters .accordion .filter .filtercontent .listing li .badge,
-.search .main .left .row .mediaselector .accordion .filter .filtercontent .listing li .badge {
-  border-radius: 0px;
-  width: 40px;
-  text-align: center;
-  box-shadow: none;
-  background: #a8d46d;
-  padding: 4px 0px 3px;
-  margin: 10px 25px 0 0;
+.search .main .left .row .filters .accordion .filter .filtercontent .listing li a span,
+.search .main .left .row .mediaselector .accordion .filter .filtercontent .listing li a span {
+  color: #7F7F7F;
 }
 .search .main .left .row .filters .accordion a.name,
 .search .main .left .row .mediaselector .accordion a.name {
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  font-weight: 500;
   border-bottom: 1px solid #f2f2f2;
   width: 100%;
   display: block;
   cursor: pointer;
-  font-size: 1.071em;
+  font-size: 17px;
   padding: 20px 25px 18px 25px;
-  color: #555555;
-}
-.search .main .left .row .filters .accordion .more,
-.search .main .left .row .mediaselector .accordion .more {
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
-  text-align: center;
-  border-top: 1px solid #f2f2f2;
-  padding: 23px 0 23px 0;
-  background: #fff;
-  display: none;
-  border-top: 0px;
-}
-.search .main .left .row .filters .accordion .more a,
-.search .main .left .row .mediaselector .accordion .more a {
-  color: #808080;
-}
-.search .main .left .row .filters .accordion .more a:hover,
-.search .main .left .row .mediaselector .accordion .more a:hover {
-  color: #00aeef;
-}
-.search .main .left .row .filters .accordion .more #hide-extra-filters,
-.search .main .left .row .mediaselector .accordion .more #hide-extra-filters {
-  display: none;
+  color: #1E1E1E;
 }
 .search .main .left .row .filters .accordion .done button.btn-euscreen,
 .search .main .left .row .mediaselector .accordion .done button.btn-euscreen {
@@ -321,55 +303,82 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 .search .main .left.optionOpened .row .mediaselector {
   display: block;
 }
-.search .main .right {
-  border-left: 6px solid #f2f2f2;
-  border-right: 6px solid #f2f2f2;
+.search .main .right .row .searchbar {
+	padding-left: 0;
+	padding-right: 0;
+	position: fixed;
+	width: 780px;
+	z-index: 20;
+	top: 0;
+	padding-top: 20px;
+	padding-bottom: 5px;
+	background-color: #ffffff;
+}
+.search .main .right .row .searchbar .form-control {
+	height: 47px;
+	box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.14);
+	padding: 13px 20px;
+	color: #1E1E1E;
+	font-size: 16px;
+	font-weight: 500;
+	border-radius: 4px;
+	border: 0;
+}
+.search .main .right .row .searchbar .glyphicon-search {
+	position: absolute;
+	right: 12px;
+	color: #F14CAE;
+	top: 28px;
+	font-size: 28px;
 }
 .search .main .right .row.results-media .mediatab {
   padding-left: 0px;
   padding-right: 0px;
   background: #ffffff;
-  border-bottom: 5px solid #00aeef;
-  border-top: 5px solid #f2f2f2;
   display: none;
   position: fixed;
   z-index: 20;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  top: 68px;
+  background-color: #ffffff;
 }
 .search .main .right .row.results-media .mediatab .nav {
   margin-top: 0px;
-  border: 0px;
+  border: 0;
+  border-radius: 4px;
+  box-shadow: 0px 1px 4px 1px rgba(0, 0, 0, 0.20);
+  display: flex;
+  justify-content: space-between;
 }
 .search .main .right .row.results-media .mediatab .nav li {
   margin: 0px;
-  border-right: 1px solid #f2f2f2;
+  margin-right: auto;
 }
 .search .main .right .row.results-media .mediatab .nav li a {
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
   border: 0px;
   border-radius: 0px;
   margin: 0px;
-  height: 60px;
   line-height: inherit;
-  font-size: 1.071em;
-  color: #808080;
-  padding: 20px 12px 20px 12px;
+  font-size: 17px;
+  color: #424242;
+  padding: 14px 28.5px;
   -webkit-transition: background 0.2s;
   transition: background 0.2s;
+  font-weight: 500;
 }
 .search .main .right .row.results-media .mediatab .nav li a:hover {
-  background: #00aeef;
-  border-radius: 0px;
-  color: #ffffff;
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
-}
-.search .main .right .row.results-media .mediatab .nav li.active {
-  border-right: 1px solid #00aeef;
+  background: #4CC5F3;
+  border-radius: 4px;
+  color: #373737;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
 }
 .search .main .right .row.results-media .mediatab .nav li.active a {
-  background: #00aeef;
-  border-radius: 0px;
-  color: #ffffff;
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  background: #4CC5F3;
+  border-radius: 4px;
+  color: #373737;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
 }
 .search .main .right .row.results-media .mediatab .nav li.inactive a {
   color: #cccccc;
@@ -382,12 +391,13 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 }
 .search .main .right .row.results-action .counter {
   background: #fff;
-  font-size: 1.1em;
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
-  color: #808080;
+  font-size: 16px;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  color: #000000;
   margin: 1px 0 0 0;
   padding-right: 0px;
   padding-left: 0px;
+  font-weight: 500;
 }
 .search .main .right .row.results-action .counter:before,
 .search .main .right .row.results-action .counter:after {
@@ -398,18 +408,17 @@ textarea.search .main .left .row .searchbar input[type="text"] {
   clear: both;
 }
 .search .main .right .row.results-action .counter .pull-left {
-  margin-top: 17px;
+  margin-top: 10px;
   margin-left: 20px;
 }
 .search .main .right .row.results-action .counter .pull-left .number {
-  color: #00aeef;
-  font-weight: bold;
+  color: #000000;
+  font-weight: 500;
 }
 .search .main .right .row.results-action .counter .pull-right .wrap-dropdown {
   float: right;
-  height: 60px;
-  border-left: 1px solid #f2f2f2;
-  padding: 17px 10px 0px 10px;
+  height: 40px;
+  padding: 10px 10px 0px 10px;
 }
 .search .main .right .row.results-action .counter .pull-right .wrap-dropdown .dropdown a {
   padding: 5px 0px 5px 15px;
@@ -419,12 +428,12 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 }
 .search .main .right .row.results-action .counter .pull-right .sort-option a {
   width: 50px;
-  height: 60px;
+  height: 40px;
   display: inline-block;
   border-left: 1px solid #f2f2f2;
   text-align: center;
   padding-top: 15px;
-  font-size: 1.2em;
+  font-size: 16px;
   -webkit-transition: background 0.3s;
   transition: background 0.3s;
 }
@@ -436,8 +445,8 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 .search .main .right .row .results {
   background: #fff;
   margin: 1px 0 0 0;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding-left: 15px;
+  padding-right: 15px;
   padding-bottom: 20px;
 }
 .search .main .right .row .results .spinner {
@@ -453,23 +462,28 @@ textarea.search .main .left .row .searchbar input[type="text"] {
 .search .main .right .row .results .media-item {
   padding-top: 20px;
   padding-bottom: 10px;
+  box-shadow: 0px 1px 4px 0px rgba(0, 0, 0, 0.10); 
 }
 .search .main .right .row .results .media-item .media-image {
   padding-right: 0px;
 }
 .search .main .right .row .results .media-item .media-metadata a h3.media-heading {
-  font-size: 1.2em;
+  font-size: 14px;
 }
 .search .main .right .row .more {
-  font-family: 'Titillium Web', 'DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
+  font-family: 'D-DIN', "Helvetica Neue", Monaco, "Andale Mono", Consolas, monospace;
   text-align: center;
   border-top: 1px solid #f2f2f2;
   padding: 23px 0 23px 0;
   background: #fff;
 }
 .search .main .right .row .more a {
-  color: #808080;
+  color: #373737;
+  padding: 10px 40px;
+  background-color: #4CC5F3;
+  font-size: 20px;
+  border-radius: 4px;
 }
 .search .main .right .row .more a:hover {
-  color: #00aeef;
+  color: #373737;
 }
